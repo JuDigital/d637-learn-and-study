@@ -1,0 +1,2606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D637 Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fff6f9;
+  --pink:#e8618f;
+  --pink-deep:#b8346a;
+  --pink-soft:#fde4ed;
+  --pink-line:#f6c4d6;
+  --green:#3d8b67;
+  --green-deep:#2a6a4c;
+  --green-soft:#e2f2e9;
+  --green-line:#b9dfca;
+  --ink:#3b2a32;
+  --muted:#8a7280;
+  --card:#ffffff;
+  --wrong:#d64570;
+  --wrong-soft:#fde0e8;
+  --shadow:0 6px 24px rgba(184,52,106,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:"Nunito",system-ui,sans-serif;font-size:17px;line-height:1.5}
+body{min-height:100vh;background:
+  radial-gradient(circle at 0% 0%, #fde4ed 0, transparent 40%),
+  radial-gradient(circle at 100% 100%, #e2f2e9 0, transparent 45%), var(--bg)}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 60px}
+header{text-align:center;margin:8px 0 18px}
+header h1{font-family:"Fraunces",serif;font-size:2rem;color:var(--pink-deep);letter-spacing:-.01em}
+header h1 em{color:var(--green)}
+header p{color:var(--muted);font-size:.9rem;margin-top:2px}
+.tabs{display:flex;gap:6px;background:#fff;border:2px solid var(--pink-line);border-radius:999px;padding:5px;margin-bottom:16px;box-shadow:var(--shadow)}
+.tab{flex:1;white-space:nowrap;border:0;background:transparent;font:inherit;font-weight:800;color:var(--muted);padding:10px 6px;border-radius:999px;cursor:pointer;font-size:.95rem}
+.tab.on{background:var(--pink);color:#fff}
+.tab .badge{display:inline-block;background:var(--green);color:#fff;border-radius:999px;font-size:.72rem;padding:0 7px;margin-left:4px;vertical-align:1px}
+.tab.on .badge{background:#fff;color:var(--pink-deep)}
+.topicbar{margin-bottom:14px}
+.topicbar label{display:block;font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--green-deep);margin-bottom:4px}
+select{width:100%;font:inherit;font-weight:700;color:var(--ink);background:#fff;border:2px solid var(--green-line);border-radius:14px;padding:10px 12px;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%233d8b67' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.view{display:none}.view.on{display:block}
+
+/* flashcards */
+.counter{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-weight:700;font-size:.9rem;margin-bottom:8px}
+.flip{perspective:1400px;cursor:pointer;margin-bottom:14px;user-select:none}
+.flip-inner{display:grid;transition:transform .5s;transform-style:preserve-3d}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.face{grid-area:1/1;min-height:330px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:24px;padding:26px 22px;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.front{background:var(--card);border:3px solid var(--pink-line);align-items:center;justify-content:center;text-align:center}
+.back{background:var(--card);border:3px solid var(--green-line);transform:rotateY(180deg)}
+.chip{display:inline-block;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:3px 10px;border-radius:999px}
+.chip.p{background:var(--pink-soft);color:var(--pink-deep)}
+.chip.g{background:var(--green-soft);color:var(--green-deep)}
+.front .term{font-family:"Fraunces",serif;font-size:1.75rem;line-height:1.2;color:var(--ink);margin:14px 0}
+.front .hint{color:var(--muted);font-size:.85rem}
+.back .term-sm{font-weight:800;color:var(--pink-deep);margin:10px 0 6px}
+.back .def{font-size:1.05rem}
+.tip{margin-top:14px;background:var(--green-soft);border-left:5px solid var(--green);border-radius:12px;padding:10px 12px;font-size:.95rem}
+.tip b{color:var(--green-deep)}
+.row{display:flex;gap:8px}
+.btn{flex:1;font:inherit;font-weight:800;border:0;border-radius:16px;padding:14px 10px;cursor:pointer;font-size:1rem;transition:transform .08s}
+.btn:active{transform:scale(.97)}
+.btn.pk{background:var(--pink);color:#fff}
+.btn.gr{background:var(--green);color:#fff}
+.btn.ol{background:#fff;color:var(--pink-deep);border:2px solid var(--pink-line)}
+.btn.olg{background:#fff;color:var(--green-deep);border:2px solid var(--green-line)}
+.btn:disabled{opacity:.45;cursor:default}
+.keys{text-align:center;color:var(--muted);font-size:.8rem;margin-top:12px}
+
+/* quiz */
+.panel{background:#fff;border:3px solid var(--pink-line);border-radius:24px;padding:24px 20px;box-shadow:var(--shadow)}
+.panel h2{font-family:"Fraunces",serif;color:var(--pink-deep);font-size:1.5rem;margin-bottom:6px}
+.panel p{color:var(--muted);margin-bottom:16px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.prog{height:10px;background:var(--pink-soft);border-radius:999px;overflow:hidden;margin-bottom:12px}
+.prog div{height:100%;background:linear-gradient(90deg,var(--pink),var(--green));width:0;transition:width .3s}
+.qtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.qnum{font-weight:800;color:var(--muted);font-size:.9rem}
+.qtext{font-size:1.15rem;font-weight:700;margin-bottom:6px}
+.qctx{background:var(--pink-soft);border-radius:14px;padding:12px 14px;margin:8px 0 4px;font-size:1rem}
+.opts{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;font:inherit;background:#fff;border:2px solid var(--pink-line);border-radius:16px;padding:12px 14px;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--pink)}
+.opt .l{flex:none;width:28px;height:28px;border-radius:50%;background:var(--pink-soft);color:var(--pink-deep);font-weight:800;display:grid;place-items:center;font-size:.85rem}
+.opt.right{background:var(--green-soft);border-color:var(--green)}
+.opt.right .l{background:var(--green);color:#fff}
+.opt.wrong{background:var(--wrong-soft);border-color:var(--wrong)}
+.opt.wrong .l{background:var(--wrong);color:#fff}
+.opt:disabled{cursor:default}
+.why{display:none;margin-top:14px;border-radius:16px;padding:14px;font-size:.98rem}
+.why.ok{display:block;background:var(--green-soft);border:2px solid var(--green-line)}
+.why.no{display:block;background:var(--wrong-soft);border:2px solid #f3b6c8}
+.why .v{font-weight:800;display:block;margin-bottom:4px}
+.why.ok .v{color:var(--green-deep)}.why.no .v{color:var(--wrong)}
+#nextBtn{margin-top:14px;width:100%;display:none}
+.score{font-family:"Fraunces",serif;font-size:3.2rem;color:var(--green);line-height:1;margin:6px 0}
+.reviewlist{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+.ri{border:2px solid var(--pink-line);border-radius:14px;padding:12px;font-size:.93rem}
+.ri b{display:block;margin-bottom:3px}
+.ri .ans{color:var(--green-deep);font-weight:700}
+.empty{text-align:center;color:var(--muted);padding:20px}
+@media (max-width:420px){.tab{font-size:.85rem;padding:10px 2px}.tab .badge{margin-left:2px;padding:0 5px}}
+footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:30px}
+@media (min-width:700px){
+  .front .term{font-size:2.1rem}
+  .face{min-height:360px}
+}
+
+/* learn */
+.learn-intro{color:var(--muted);text-align:center;margin-bottom:12px;font-size:.95rem}
+.lesson{background:#fff;border:2px solid var(--pink-line);border-radius:20px;margin-bottom:10px;box-shadow:var(--shadow);overflow:hidden}
+.lesson[open]{border-color:var(--pink)}
+.lesson>summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:center;padding:14px 16px}
+.lesson>summary::-webkit-details-marker{display:none}
+.lesson>summary::after{content:"+";margin-left:auto;font-weight:800;font-size:1.4rem;color:var(--pink)}
+.lesson[open]>summary::after{content:"−"}
+.lesson>summary b{display:block;line-height:1.3}
+.lesson>summary small{display:block;color:var(--muted);font-size:.85rem}
+.ln{flex:none;width:34px;height:34px;border-radius:50%;background:var(--green-soft);color:var(--green-deep);font-weight:800;display:grid;place-items:center;font-size:.9rem}
+#L-start .ln,#L-apply .ln{background:var(--pink);color:#fff}
+.lb{padding:4px 16px 18px;border-top:2px dashed var(--pink-line)}
+.lb p{margin:12px 0}
+.lb h5{font-size:1rem;color:var(--pink-deep);margin:18px 0 8px}
+.lb .small{font-size:.88rem;color:var(--muted)}
+.note{background:var(--green-soft);border-left:5px solid var(--green);border-radius:12px;padding:12px 14px;margin:14px 0;font-size:.95rem}
+.trap{background:var(--wrong-soft);border-left:5px solid var(--wrong);border-radius:12px;padding:12px 14px;margin:14px 0;font-size:.95rem}
+.trap b:first-child{color:var(--wrong)}
+ul.plain{padding-left:20px;display:flex;flex-direction:column;gap:5px}
+ul.check{list-style:none;display:flex;flex-direction:column;gap:6px}
+ul.check li{padding-left:28px;position:relative}
+ul.check li::before{content:"✓";position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:var(--green);color:#fff;font-size:.75rem;display:grid;place-items:center;font-weight:800}
+.flow{list-style:none;counter-reset:f;margin:12px 0;display:flex;flex-direction:column;gap:0}
+.flow li{counter-increment:f;position:relative;padding:8px 0 16px 46px}
+.flow li::before{content:counter(f);position:absolute;left:0;top:6px;width:32px;height:32px;border-radius:50%;background:var(--pink);color:#fff;font-weight:800;display:grid;place-items:center;font-size:.9rem;z-index:1}
+.flow li::after{content:"";position:absolute;left:15px;top:38px;bottom:0;width:2px;background:var(--pink-line)}
+.flow li:last-child::after{display:none}
+.flow li b{display:block}
+.flow li em{font-style:normal;color:var(--green-deep);font-weight:800}
+.flow li span{display:block;color:#5b4651;font-size:.94rem}
+.groups{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 16px}
+.groups div{background:var(--pink-soft);border-radius:14px;padding:10px;font-size:.9rem}
+.groups b{display:block;color:var(--pink-deep)}
+.timeline{list-style:none;border-left:3px solid var(--pink-line);margin-left:8px;padding-left:18px;display:flex;flex-direction:column;gap:14px}
+.timeline li{position:relative;font-size:.94rem}
+.timeline li::before{content:"";position:absolute;left:-26px;top:4px;width:13px;height:13px;border-radius:50%;background:var(--pink);border:3px solid #fff;box-shadow:0 0 0 2px var(--pink)}
+.timeline li.law::before{background:var(--green);box-shadow:0 0 0 2px var(--green)}
+.timeline .yr{display:inline-block;font-weight:800;font-size:.78rem;background:var(--pink-soft);color:var(--pink-deep);border-radius:999px;padding:1px 9px;margin-bottom:2px}
+.timeline li.law .yr{background:var(--green-soft);color:var(--green-deep)}
+.timeline b{display:block}
+.timeline i{display:block;font-style:normal;color:var(--green-deep);font-weight:700;font-size:.88rem;margin-top:2px}
+.cmp3{display:grid;grid-template-columns:1fr;gap:10px;margin:12px 0}
+.cmp3 .c{border-radius:16px;padding:12px 14px;border:2px solid}
+.cmp3 .pk{border-color:var(--pink-line);background:#fff9fb}
+.cmp3 .gr{border-color:var(--green-line);background:#f6fbf8}
+.cmp3 .pu{border-color:#e3cfe0;background:#fcf8fb}
+.cmp3 h4{font-family:"Fraunces",serif;font-size:1.2rem;color:var(--pink-deep);margin-bottom:6px}
+.cmp3 .gr h4{color:var(--green-deep)}
+.cmp3 dl{display:grid;grid-template-columns:62px 1fr;gap:4px 8px;font-size:.9rem}
+.cmp3 dt{font-weight:800;color:var(--muted);font-size:.78rem;text-transform:uppercase;padding-top:2px}
+.split{display:grid;grid-template-columns:1fr;gap:10px;margin:12px 0}
+.split>div{background:var(--green-soft);border-radius:16px;padding:12px 14px;font-size:.93rem}
+.split>div:first-child{background:var(--pink-soft)}
+.split>div.no{background:var(--wrong-soft)}
+.split b{display:block;font-size:1rem;margin-bottom:4px}
+.split i{display:block;font-style:normal;color:#5b4651;font-size:.88rem;margin-top:6px}
+.split ul{margin-top:4px}
+.cards3{display:grid;grid-template-columns:1fr;gap:8px;margin:12px 0}
+.cards3>div{border:2px solid var(--green-line);border-radius:14px;padding:10px 12px;font-size:.92rem}
+.cards3 b{display:block;color:var(--green-deep)}
+.cards3 i{display:block;font-style:normal;color:var(--muted);font-size:.85rem;margin-top:4px}
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:4px;margin:14px 0}
+.pyramid div{text-align:center;color:#fff;border-radius:12px;padding:10px;font-size:.88rem;line-height:1.35}
+.pyramid b{display:block;font-size:1rem}
+.pyramid .t3{width:50%;background:var(--pink-deep)}
+.pyramid .t2{width:75%;background:var(--pink)}
+.pyramid .t1{width:100%;background:var(--green)}
+.tbl{width:100%;border-collapse:collapse;font-size:.9rem;margin:10px 0}
+.tbl th{background:var(--green);color:#fff;text-align:left;padding:8px}
+.tbl th:first-child{border-top-left-radius:10px}.tbl th:last-child{border-top-right-radius:10px}
+.tbl td{padding:8px;border-bottom:1px solid var(--pink-line);vertical-align:top}
+.tbl td:first-child{font-weight:700;width:40%}
+.prong{display:flex;flex-direction:column;align-items:stretch;gap:4px;margin:10px 0;text-align:center}
+.prong div{background:var(--pink-soft);border-radius:14px;padding:10px;font-size:.95rem}
+.prong div.yes{background:var(--green);color:#fff;font-weight:800}
+.prong span{font-weight:800;color:var(--pink-deep);font-size:1.2rem}
+.acro{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:12px 0}
+.acro div{background:var(--pink-soft);border-radius:12px;padding:8px 4px;text-align:center;font-size:.85rem}
+.acro b{font-family:"Fraunces",serif;font-size:1.5rem;color:var(--pink-deep);display:inline}
+.acro span{display:block;color:var(--muted);font-size:.75rem;line-height:1.25;margin-top:2px}
+.ladder{display:flex;flex-direction:column;align-items:center;gap:5px;margin:14px 0 4px}
+.ladder div{width:var(--w);background:linear-gradient(90deg,var(--green-soft),var(--pink-soft));border:2px solid var(--green-line);border-radius:12px;padding:8px;text-align:center;font-size:.86rem}
+.ladder div:nth-child(n+4){border-color:var(--pink-line)}
+.ladder b{display:block}
+.ladder-key,.scale-key{display:flex;justify-content:space-between;font-size:.78rem;font-weight:800;color:var(--muted);margin-bottom:8px}
+.scale{display:flex;flex-direction:column;gap:6px;margin:12px 0 4px}
+.scale div{border-radius:12px;padding:10px 12px;font-size:.9rem;border-left:8px solid}
+.scale div:nth-child(1){background:#f3faf6;border-color:#9fd2b5}
+.scale div:nth-child(2){background:#eaf6ef;border-color:var(--green)}
+.scale div:nth-child(3){background:#fdf0f4;border-color:#f19ab9}
+.scale div:nth-child(4){background:#fde4ed;border-color:var(--pink)}
+.scale div:nth-child(5){background:#fbd6e3;border-color:var(--pink-deep)}
+.scale b{display:block}
+.fc{display:flex;flex-direction:column;align-items:stretch;margin:12px 0}
+.fbox{border:2px solid var(--pink-line);border-radius:14px;padding:10px 12px;font-size:.92rem;background:#fff;text-align:center}
+.fbox.soft{background:var(--green-soft);border-color:var(--green-line)}
+.fbox.pk{background:var(--pink-soft);border-color:var(--pink)}
+.fbox.gr{background:var(--green-soft);border-color:var(--green)}
+.farrow{text-align:center;color:var(--pink);line-height:1.4}
+.fsplit{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.special{background:var(--pink-deep);color:#fff;border-radius:16px;padding:12px 14px;margin:12px 0;font-size:.93rem}
+.special>b:first-child{display:block;margin-bottom:4px}
+.cycle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.cycle div{border-radius:14px;padding:10px 12px;font-size:.88rem;background:var(--green-soft)}
+.cycle div:nth-child(2),.cycle div:nth-child(3){background:var(--pink-soft)}
+.cycle b{display:block}
+.cycle em{display:inline-block;font-style:normal;font-weight:800;font-size:.75rem;background:#fff;border-radius:999px;padding:0 8px;margin:2px 0 4px;color:var(--pink-deep)}
+.nums{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.nums div{background:var(--pink-soft);border-radius:14px;padding:10px;font-size:.85rem;line-height:1.3}
+.nums div:nth-child(4n+2),.nums div:nth-child(4n+3){background:var(--green-soft)}
+.nums b{display:block;font-family:"Fraunces",serif;font-size:1.7rem;color:var(--pink-deep);line-height:1.1}
+.nums div:nth-child(4n+2) b,.nums div:nth-child(4n+3) b{color:var(--green-deep)}
+.lesson.hl{animation:hl 1.6s}
+@keyframes hl{0%{box-shadow:0 0 0 6px var(--green)}100%{box-shadow:var(--shadow)}}
+/* explain more on cards */
+.more-btn{margin-top:14px;font:inherit;font-weight:800;background:#fff;color:var(--pink-deep);border:2px solid var(--pink-line);border-radius:12px;padding:9px 12px;cursor:pointer;width:100%}
+.more{display:none;margin-top:10px;font-size:.96rem}
+.more.on{display:block}
+.more .blk{background:var(--pink-soft);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.more .blk b{display:block;color:var(--pink-deep);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+.lesson-link{display:block;width:100%;font:inherit;font-weight:800;background:var(--green);color:#fff;border:0;border-radius:12px;padding:10px;cursor:pointer;margin-top:4px}
+.why .lesson-link{margin-top:10px}
+@media (min-width:640px){
+  .cmp3{grid-template-columns:repeat(3,1fr)}
+  .split{grid-template-columns:1fr 1fr}
+  .cards3{grid-template-columns:repeat(3,1fr)}
+  .prong{flex-direction:row;align-items:center}
+  .prong div{flex:1}
+  .cycle{grid-template-columns:repeat(4,1fr)}
+  .nums{grid-template-columns:repeat(3,1fr)}
+  .acro{grid-template-columns:repeat(4,1fr)}
+}
+
+/* read aloud */
+.voice-btn{margin-top:8px;font:inherit;font-weight:800;font-size:.85rem;background:#fff;color:var(--green-deep);border:2px solid var(--green-line);border-radius:999px;padding:6px 14px;cursor:pointer}
+.speak-btn{font:inherit;font-weight:800;font-size:.85rem;background:var(--green-soft);color:var(--green-deep);border:2px solid var(--green-line);border-radius:999px;padding:6px 14px;cursor:pointer;margin:12px 0 0}
+.lb>.speak-btn{margin-top:14px}
+#selRead{white-space:nowrap;position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:50;display:none;font:inherit;font-weight:800;background:var(--green);color:#fff;border:0;border-radius:999px;padding:13px 22px;box-shadow:0 8px 24px rgba(0,0,0,.2);cursor:pointer}
+#player{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:60;display:none;align-items:center;gap:8px;background:var(--pink-deep);color:#fff;border-radius:999px;padding:8px 10px 8px 18px;box-shadow:0 8px 24px rgba(0,0,0,.25);font-weight:800;font-size:.9rem;white-space:nowrap}
+#player button{font:inherit;font-weight:800;border:0;border-radius:999px;padding:8px 14px;cursor:pointer;background:#fff;color:var(--pink-deep)}
+#voiceModal{position:fixed;inset:0;z-index:70;background:rgba(59,42,50,.45);display:none;align-items:center;justify-content:center;padding:16px}
+#voiceModal.on{display:flex}
+#voiceModal .panel{width:100%;max-width:440px}
+#voiceModal label{display:block;font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--green-deep);margin:14px 0 4px}
+#voiceModal input[type=range]{width:100%;accent-color:var(--pink)}
+#voiceModal .small{font-size:.85rem;color:var(--muted);margin-top:12px}
+
+/* memory tricks */
+.quick{background:linear-gradient(135deg,var(--pink-soft),var(--green-soft));border:2px solid var(--pink-line);border-radius:16px;padding:12px 14px;margin:14px 0;font-size:.97rem}
+.quick>b:first-child{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--pink-deep);margin-bottom:4px}
+.quick table{width:100%;border-collapse:collapse;font-size:.88rem;margin-top:4px}
+.quick td{padding:6px 4px;border-bottom:1px solid rgba(184,52,106,.15);vertical-align:top}
+.quick td:first-child{font-weight:800;white-space:nowrap}
+.quick td:nth-child(2){color:var(--pink-deep);font-weight:700}
+details.more-d{margin-top:12px;border:2px dashed var(--green-line);border-radius:14px;padding:4px 12px}
+details.more-d>summary{list-style:none;cursor:pointer;font-weight:800;color:var(--green-deep);padding:8px 0}
+.hooks{margin-top:12px;background:#fff7e8;border:2px solid #f5d9a8;border-radius:12px;padding:10px 12px}
+.hooks>b{display:block;color:#a8661b;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.hk{display:flex;flex-direction:column;gap:7px}
+.hk div{font-size:.94rem;line-height:1.4}
+.hk span{display:inline-block;background:#f5d9a8;color:#7a4510;font-weight:800;font-size:.72rem;border-radius:999px;padding:1px 8px;margin-right:6px;vertical-align:1px}
+.trick-sec h5{margin-top:16px}
+.trick-row{padding:8px 0;border-bottom:1px solid var(--pink-line);font-size:.93rem}
+.trick-row b{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>D637 <em>Study</em></h1>
+    <p>Curriculum and Instructional Strategies for Meaningful Learning</p>
+    <button class="voice-btn" id="voiceOpen">🔊 Read aloud settings</button>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab on" data-v="learn">Learn</button>
+    <button class="tab" data-v="cards">Cards</button>
+    <button class="tab" data-v="quiz">Quiz</button>
+    <button class="tab" data-v="missed">Missed <span class="badge" id="missedBadge">0</span></button>
+  </nav>
+
+  <div class="topicbar">
+    <label for="topic">Topic</label>
+    <select id="topic"></select>
+  </div>
+
+  <!-- LEARN -->
+  <section class="view on" id="v-learn">
+    <p class="learn-intro">Tap a lesson to open it. Each one explains a topic in plain words, with a picture or chart and the test traps to watch for.</p>
+
+    <!-- START HERE -->
+    <details class="lesson" id="L-start" data-k="all">
+      <summary><span class="ln">★</span><span><b>Start here: how it all connects</b><small>The whole course on one page</small></span></summary>
+      <div class="lb">
+        <div class="quick"><b>⚡ 30 second version</b>Standard → Objective (condition, behavior, criterion) → Pre-assess → Teach with a strategy → Formative checks → Differentiate → Summative test → Use the data → Repeat.</div>
+        <p>This whole course is one loop. Almost every test question fits somewhere on it. When you read a scenario, ask yourself: <b>what step is this teacher on?</b></p>
+        <ol class="flow">
+          <li><b>Pick the standard</b><span>The state or national standard: what students must learn this grade.</span></li>
+          <li><b>Write a measurable objective</b><span>Condition + behavior + criterion. It must match the standard.</span></li>
+          <li><b>Plan the summative assessment first</b><span>Backward design: decide how you'll know they learned it before planning the lesson.</span></li>
+          <li><b>Pre-assess</b><span>Find out what students already know (readiness).</span></li>
+          <li><b>Choose a strategy</b><span>Direct, indirect, cooperative, discovery, or independent study.</span></li>
+          <li><b>Teach and scaffold</b><span>I do, we do, you do. Support students in their ZPD, then fade the help.</span></li>
+          <li><b>Check with formative assessment</b><span>Exit tickets, thumbs up, partner talk. Adjust as you go.</span></li>
+          <li><b>Differentiate</b><span>Change content, process, product, or environment based on readiness, interest, and profile. Be culturally responsive.</span></li>
+          <li><b>Summative assessment</b><span>Measure mastery at the end with a test or a rubric.</span></li>
+          <li><b>Use the data</b><span>Reteach, regroup, enrich, give feedback. Then the loop starts again.</span></li>
+        </ol>
+        <div class="note">Your Task 1 to 3 frog lesson followed this exact loop. Use it as your example for every question: TEKS 1.8.C → story map objective → story map test → I do, we do, you do → sentence stems and picture cards → reteach in small groups.</div>
+      </div>
+    </details>
+
+    <!-- TRICKS -->
+    <details class="lesson" id="L-tricks" data-k="all">
+      <summary><span class="ln">💡</span><span><b>Memory tricks for every term</b><small>Fast review: one trick per term</small></span></summary>
+      <div class="lb"><p>One trick per term for quick review. Flip a flashcard to see 2 or 3 tricks for each one.</p><div id="tricksBody"></div></div>
+    </details>
+
+    <!-- STANDARDS -->
+    <details class="lesson" id="L-std" data-k="std">
+      <summary><span class="ln">1</span><span><b>Objectives aligned to standards</b><small>Standards, objectives, and the C B C formula</small></span></summary>
+      <div class="lb">
+        <div class="quick"><b>⚡ 30 second version</b><b>Standards</b> = what students learn this year (state or national). <b>Objectives</b> = specific, measurable daily goals that build toward the standard. A good objective has a <b>Condition</b>, a <b>Behavior</b>, and a <b>Criterion</b>.</div>
+        <div class="split">
+          <div><b>Standard</b>Big, yearly, written by the state or nation.<i>TEKS 1.8.C: describe the plot elements of a story.</i></div>
+          <div><b>Objective</b>Small, daily, written by the teacher. Measurable.<i>After a read aloud, students will describe the problem, 3 events, and resolution with 4 of 5 correct.</i></div>
+        </div>
+        <h5>Build an objective: C + B + C</h5>
+        <table class="tbl">
+          <tr><th>Part</th><th>Asks</th><th>Example</th></tr>
+          <tr><td><b>Condition</b></td><td>Under what circumstances? With what tools?</td><td>Without a calculator...</td></tr>
+          <tr><td><b>Behavior</b></td><td>What will students DO? (observable verb)</td><td>...students will add two digit numbers...</td></tr>
+          <tr><td><b>Criterion</b></td><td>How well? What counts as mastery?</td><td>...with 90% accuracy.</td></tr>
+        </table>
+        <div class="split">
+          <div><b>✓ Measurable verbs</b>describe, list, identify, compare, solve, write, label, explain</div>
+          <div><b>✗ Not measurable</b>understand, know, learn, appreciate, be aware of, enjoy</div>
+        </div>
+        <h5>Planning the year</h5>
+        <ul class="plain">
+          <li><b>Scope and sequence:</b> what gets taught (scope) and in what order and when (sequence).</li>
+          <li><b>Spiraling curriculum:</b> topics come back each year, a little harder each time.</li>
+        </ul>
+        <div class="trap"><b>Test trap:</b> If an answer choice says “students will understand...” it's not a measurable objective. Look for an action you can see and a number for mastery.</div>
+        <div class="trap"><b>Test trap:</b> The objective's verb should match the standard's verb. If the standard says “describe,” the objective should say “describe,” not “identify.”</div>
+      </div>
+    </details>
+
+    <!-- STRATEGIES -->
+    <details class="lesson" id="L-strat" data-k="strat">
+      <summary><span class="ln">2</span><span><b>Instructional strategies</b><small>Which teaching method fits which situation</small></span></summary>
+      <div class="lb">
+        <div class="quick"><b>⚡ 30 second version</b><b>Direct</b> = teacher leads (new skills). <b>Indirect</b> = students solve problems (critical thinking). <b>Cooperative</b> = groups. <b>Discovery/experiential</b> = hands on, real world. <b>Independent study</b> = own pace, own interest.</div>
+        <table class="tbl">
+          <tr><th>Strategy</th><th>Who leads</th><th>Clue words in a question</th></tr>
+          <tr><td><b>Direct instruction</b></td><td>Teacher</td><td>model, explicit, step by step, I do we do you do, new skill</td></tr>
+          <tr><td><b>Indirect instruction</b></td><td>Students (teacher guides)</td><td>problem solving, case study, inquiry, critical thinking</td></tr>
+          <tr><td><b>Cooperative learning</b></td><td>Groups</td><td>teams, jigsaw, think pair share, academic and social skills</td></tr>
+          <tr><td><b>Discovery/experiential</b></td><td>Students</td><td>hands on, real world, explore, reflect, role play, simulation</td></tr>
+          <tr><td><b>Independent study</b></td><td>The individual student</td><td>own pace, own interest, self motivated</td></tr>
+        </table>
+        <h5>Role play vs. simulation</h5>
+        <div class="split">
+          <div><b>Role play</b>Students become a PERSON and see their perspective.<i>Acting as a shop owner and an upset customer.</i></div>
+          <div><b>Simulation</b>Students work inside a PROCESS or system.<i>A mock election, a pretend store, a stock market game.</i></div>
+        </div>
+        <h5>Grouping</h5>
+        <div class="cards3">
+          <div><b>Heterogenous</b>Mixed ability levels.<i>Hetero = different. Strong reader + building reader.</i></div>
+          <div><b>Homogenous</b>One ability level.<i>Homo = same. A reteach group of 4.</i></div>
+          <div><b>Flexible</b>Groups change based on current data and needs.<i>Nobody stuck in the “low group” all year.</i></div>
+        </div>
+        <h5>Gradual release (I do, we do, you do)</h5>
+        <div class="fbox"><b>I do:</b> teacher models and thinks aloud</div>
+        <div class="farrow">▼</div>
+        <div class="fbox soft"><b>We do:</b> guided practice together, with support</div>
+        <div class="farrow">▼</div>
+        <div class="fbox"><b>You do:</b> students practice independently</div>
+        <div class="trap"><b>Test trap:</b> Brand new skill? The best answer is usually direct instruction with modeling first, not “let students discover it alone.”</div>
+        <div class="trap"><b>Test trap:</b> The “best” strategy is the one that matches the objective. If the objective is about critical thinking or problem solving, lean indirect.</div>
+      </div>
+    </details>
+
+    <!-- THEORIES -->
+    <details class="lesson" id="L-theory" data-k="theory">
+      <summary><span class="ln">3</span><span><b>Educational theories</b><small>Behaviorism, cognitivism, constructivism, connectivism, ZPD</small></span></summary>
+      <div class="lb">
+        <div class="quick"><b>⚡ 30 second version</b><b>Behaviorism</b> = rewards and consequences shape behavior. <b>Cognitivism</b> = what happens inside the brain. <b>Constructivism</b> = students build knowledge through experience. <b>Connectivism</b> = learning through networks and technology. <b>ZPD + scaffolding</b> = help in the sweet spot, then fade it.</div>
+        <div class="cmp3">
+          <div class="c pk"><h4>Behaviorism</h4><dl><dt>Focus</dt><dd>Observable behavior</dd><dt>Names</dt><dd>Skinner, Pavlov</dd><dt>Looks like</dt><dd>Sticker charts, praise, token economy, drill and practice</dd></dl></div>
+          <div class="c gr"><h4>Cognitivism</h4><dl><dt>Focus</dt><dd>Thinking, memory, processing</dd><dt>Names</dt><dd>Piaget (stages)</dd><dt>Looks like</dt><dd>Graphic organizers, chunking, mnemonics, connecting to prior knowledge</dd></dl></div>
+          <div class="c pu"><h4>Constructivism</h4><dl><dt>Focus</dt><dd>Students build understanding through experience</dd><dt>Names</dt><dd>Piaget, Vygotsky</dd><dt>Looks like</dt><dd>Discovery learning, hands on exploration, projects</dd></dl></div>
+        </div>
+        <div class="note"><b>Connectivism</b> is the newest theory, for the digital age. Learning happens through social and technological networks: online forums, video calls with experts, shared digital projects.</div>
+        <h5>Zone of proximal development (Vygotsky)</h5>
+        <div class="pyramid">
+          <div class="t3"><b>Can't do yet</b>Too hard, even with help</div>
+          <div class="t2"><b>ZPD: can do WITH help</b>The sweet spot for teaching. Scaffold here.</div>
+          <div class="t1"><b>Can do alone</b>Already mastered</div>
+        </div>
+        <p><b>Scaffolding</b> is the temporary help you give inside the ZPD, like sentence stems, picture cards, and modeling. Just like scaffolding on a building, it comes down when the student can stand on their own.</p>
+        <div class="trap"><b>Test trap:</b> ZPD is Vygotsky, not Piaget. Vygotsky = learning is social, with a more knowledgeable other. Piaget = stages, child explores on their own.</div>
+        <div class="trap"><b>Test trap:</b> Behaviorism vs. cognitivism: behaviorism only looks at what you can SEE students do. Cognitivism looks INSIDE at how they think and remember.</div>
+      </div>
+    </details>
+
+    <!-- ASSESSMENT -->
+    <details class="lesson" id="L-assess" data-k="assess">
+      <summary><span class="ln">4</span><span><b>Assessment strategies</b><small>Pre, formative, summative, rubrics</small></span></summary>
+      <div class="lb">
+        <div class="quick"><b>⚡ 30 second version</b><b>Pre-assessment</b> = before teaching (baseline). <b>Formative</b> = during (adjust teaching). <b>Summative</b> = end (measure mastery). <b>Rubrics</b> grade performance tasks with clear criteria and descriptors.</div>
+        <table class="tbl">
+          <tr><th>Type</th><th>When</th><th>Why</th><th>Examples</th></tr>
+          <tr><td><b>Pre-assessment</b></td><td>Before</td><td>Find the baseline</td><td>Pretest, screener, diagnostic, picture sort</td></tr>
+          <tr><td><b>Formative</b></td><td>During</td><td>Adjust teaching</td><td>Exit ticket, thumbs up, whiteboards, partner talk</td></tr>
+          <tr><td><b>Summative</b></td><td>End</td><td>Measure mastery</td><td>Unit test, final exam, final project</td></tr>
+        </table>
+        <div class="note"><b>Soup trick:</b> When the cook tastes the soup, that's formative. When the guest tastes the soup, that's summative.</div>
+        <h5>Performance-based</h5>
+        <div class="split">
+          <div><b>Performance-based learning</b>Teaching so students can DO the skill.</div>
+          <div><b>Performance-based assessment</b>A task graded with a rubric that shows the skill.<i>Your WGU Tasks 1, 2, and 3.</i></div>
+        </div>
+        <h5>Scales vs. rubrics</h5>
+        <div class="split">
+          <div><b>Scale</b>Broad overall level.<i>1 beginning, 2 developing, 3 proficient, 4 advanced.</i></div>
+          <div><b>Rubric</b>Detailed criteria with a descriptor for each level.<i>Not Evident, Approaching Competence, Competent for each rubric row.</i></div>
+        </div>
+        <ul class="check">
+          <li><b>Descriptors</b> explain what each level looks like, clearly enough for students to know how to improve.</li>
+          <li><b>Transparency and clarity:</b> students see the criteria BEFORE they start, so grading is fair.</li>
+        </ul>
+        <div class="trap"><b>Test trap:</b> It's not the tool, it's how you USE it. A quiz used to adjust tomorrow's lesson is formative. The same quiz used for a final grade is summative.</div>
+      </div>
+    </details>
+
+    <!-- DATA -->
+    <details class="lesson" id="L-data" data-k="data">
+      <summary><span class="ln">5</span><span><b>Using assessment data to plan</b><small>Data, feedback, and the teaching cycle</small></span></summary>
+      <div class="lb">
+        <div class="quick"><b>⚡ 30 second version</b>Data is any information that guides teaching. Collect it, analyze it, then reteach, regroup, or enrich. Good feedback is <b>timely, specific, and actionable</b>.</div>
+        <h5>The data cycle</h5>
+        <ol class="flow">
+          <li><b>Assess</b><span>Pre-assessment, exit tickets, observations, work samples, tests.</span></li>
+          <li><b>Analyze</b><span>Who got it? Who didn't? What mistake are they making?</span></li>
+          <li><b>Adjust</b><span>Reteach in a small group, regroup students, enrich students who are ready, change the strategy.</span></li>
+          <li><b>Reassess</b><span>Check again to see if the change worked.</span></li>
+        </ol>
+        <h5>What the data says, what you do</h5>
+        <table class="tbl">
+          <tr><th>The data shows...</th><th>Best next step</th></tr>
+          <tr><td>Most of the class missed it</td><td>Reteach the whole class with a different strategy</td></tr>
+          <tr><td>A small group missed it</td><td>Small group reteach (flexible grouping)</td></tr>
+          <tr><td>Some already mastered it</td><td>Enrichment or extension</td></tr>
+          <tr><td>Everyone mastered it</td><td>Move on</td></tr>
+        </table>
+        <h5>Feedback that works</h5>
+        <div class="split">
+          <div><b>✓ Effective</b>“Your first two events are in order. Check event 3. What happened after Tad helped?”</div>
+          <div><b>✗ Not effective</b>“Good job!” or “Wrong.” Praise isn't feedback. It doesn't tell the student what to do next.</div>
+        </div>
+        <div class="trap"><b>Test trap:</b> When a question gives you data, the right answer almost always USES it to change instruction for the specific students who need it. Moving on or retesting everyone is rarely right.</div>
+      </div>
+    </details>
+
+    <!-- DIFFERENTIATION -->
+    <details class="lesson" id="L-diff" data-k="diff">
+      <summary><span class="ln">6</span><span><b>Principles of differentiation</b><small>Readiness, interest, profile, and content, process, product, environment</small></span></summary>
+      <div class="lb">
+        <div class="quick"><b>⚡ 30 second version</b>Differentiate <b>based on</b> readiness, interest, and learning profile. Differentiate <b>what you change</b>: content, process, product, or environment. Same goal, different paths.</div>
+        <h5>Based on WHO the student is (R I P)</h5>
+        <div class="cards3">
+          <div><b>Readiness</b>Current skill level for this goal.<i>Found with pre-assessment.</i></div>
+          <div><b>Interest</b>What the student cares about.<i>Found with interest surveys.</i></div>
+          <div><b>Learning profile</b>How the student learns best.<i>Visual, movement, alone, in a group.</i></div>
+        </div>
+        <h5>WHAT the teacher can change</h5>
+        <table class="tbl">
+          <tr><th>Element</th><th>Asks</th><th>Example</th></tr>
+          <tr><td><b>Content</b></td><td>WHAT are they learning? (KUD: know, understand, do)</td><td>Texts at different reading levels on the same topic</td></tr>
+          <tr><td><b>Process</b></td><td>HOW do they make sense of it?</td><td>Manipulatives, graphic organizers, partner work</td></tr>
+          <tr><td><b>Product</b></td><td>HOW do they show it?</td><td>Poster, video, essay, or oral retell</td></tr>
+          <tr><td><b>Affect/environment</b></td><td>How does the room look and FEEL?</td><td>Quiet corner, flexible seating, safe to make mistakes</td></tr>
+        </table>
+        <div class="note"><b>Cooking trick:</b> Content = the ingredients. Process = the cooking. Product = the meal on the plate. Environment = the kitchen and the vibe.</div>
+        <div class="trap"><b>Test trap:</b> Differentiation does NOT mean a different standard for each student. Everyone works toward the same goal through different paths.</div>
+        <div class="trap"><b>Test trap:</b> Process vs. product: if students are still LEARNING it, that's process. If they're SHOWING what they learned, that's product.</div>
+      </div>
+    </details>
+
+    <!-- DIFFERENTIATED STRATEGIES -->
+    <details class="lesson" id="L-adapt" data-k="adapt">
+      <summary><span class="ln">7</span><span><b>Differentiated instructional strategies</b><small>Adaptations, accommodations, modifications, and learner groups</small></span></summary>
+      <div class="lb">
+        <div class="quick"><b>⚡ 30 second version</b><b>Adaptation</b> = change the environment, equipment, or how work is completed. <b>Accommodation</b> = change HOW students access learning (same expectations). <b>Modification</b> = change WHAT students learn (different expectations).</div>
+        <div class="cmp3">
+          <div class="c pk"><h4>Adaptation</h4><dl><dt>Changes</dt><dd>Environment, equipment, or how assignments are completed</dd><dt>Like</dt><dd>Slant board, pencil grip, quiet room, typing instead of writing</dd></dl></div>
+          <div class="c gr"><h4>Accommodation</h4><dl><dt>Changes</dt><dd>How instruction is delivered or curriculum is accessed</dd><dt>Goals</dt><dd>SAME</dd><dt>Like</dt><dd>Audiobook, extended time, large print, read aloud</dd></dl></div>
+          <div class="c pu"><h4>Modification</h4><dl><dt>Changes</dt><dd>The content and skills to be mastered</dd><dt>Goals</dt><dd>DIFFERENT</dd><dt>Like</dt><dd>Fewer spelling words, lower reading level, fewer choices</dd></dl></div>
+        </div>
+        <h5>Supports for each learner group</h5>
+        <table class="tbl">
+          <tr><th>Learner</th><th>Strategies that fit</th></tr>
+          <tr><td><b>English learners</b></td><td>Visuals, sentence stems, preteach vocabulary, partner talk, home language</td></tr>
+          <tr><td><b>ADHD</b></td><td>Chunk tasks, checklists, timers, movement breaks, preferential seating</td></tr>
+          <tr><td><b>Learning disability</b></td><td>Audiobooks, graphic organizers, explicit instruction, extra practice in the specific area</td></tr>
+          <tr><td><b>Gifted and talented</b></td><td>Enrichment, extension questions, acceleration, curriculum compacting, independent study</td></tr>
+        </table>
+        <h5>Competency-based education</h5>
+        <p><b>CBE</b> means students move on as soon as they prove mastery, not when the term ends. <b>Competency</b> means being able to APPLY knowledge and skills to perform a task. WGU is a CBE school.</p>
+        <div class="trap"><b>Test trap:</b> Extended time is an accommodation, NOT a modification. The test itself didn't change.</div>
+        <div class="trap"><b>Test trap:</b> Gifted students need differentiation too. “Give them more of the same work” is the wrong answer. Go deeper, not longer.</div>
+      </div>
+    </details>
+
+    <!-- CRT -->
+    <details class="lesson" id="L-crt" data-k="crt">
+      <summary><span class="ln">8</span><span><b>Culturally responsive teaching</b><small>Seeing students' cultures as strengths</small></span></summary>
+      <div class="lb">
+        <div class="quick"><b>⚡ 30 second version</b>Culturally responsive teaching values students' customs, experiences, and perspectives and uses them to improve instruction. It's <b>asset based</b>: a student's culture is a strength, never a problem to fix.</div>
+        <div class="split">
+          <div><b>Culturally responsive teaching</b>The approach: acknowledge and value students' cultures, experiences, and perspectives.<i>Geneva Gay is the name linked to this term.</i></div>
+          <div><b>Culturally responsive pedagogy (CRP)</b>The method: students learn differently, and that's connected to family, cultural identity, language, and background.<i>Gloria Ladson-Billings wrote about culturally relevant pedagogy.</i></div>
+        </div>
+        <h5>What it looks like</h5>
+        <ul class="check">
+          <li>Books and examples that reflect students' lives and communities</li>
+          <li>Building relationships with students and families</li>
+          <li>Drawing on <b>funds of knowledge</b>, the skills students bring from home</li>
+          <li>Welcoming home languages</li>
+          <li>High expectations for every student</li>
+          <li>Learning about each student as an individual</li>
+        </ul>
+        <div class="split">
+          <div><b>✗ Deficit thinking</b>“Her family doesn't speak English, so she's behind.”</div>
+          <div><b>✓ Asset-based thinking</b>“She's bilingual. Let's use that strength.”</div>
+        </div>
+        <div class="trap"><b>Test trap:</b> Any answer that blames a student's culture, family, or language is wrong. Any answer built on stereotypes is wrong. Pick the answer that builds relationships and uses students' backgrounds as strengths.</div>
+      </div>
+    </details>
+  </section>
+
+
+  <!-- FLASHCARDS -->
+  <section class="view" id="v-cards">
+    <div class="counter"><span id="cCount">1 / 1</span><span id="cTopic" class="chip g"></span></div>
+    <div class="flip" id="flip">
+      <div class="flip-inner">
+        <div class="face front">
+          <div class="term" id="cTerm"></div>
+          <div class="hint">Tap to flip</div>
+        </div>
+        <div class="face back">
+          <span class="chip p" style="align-self:flex-start">Answer</span>
+          <div class="term-sm" id="cTerm2"></div>
+          <div class="def" id="cDef"></div>
+          <div class="tip" id="cTip"></div>
+          <div class="hooks" id="cHooks"></div>
+          <button class="speak-btn" id="cSpeak">🔊 Listen</button>
+          <button class="more-btn" id="moreBtn">Explain it more ▾</button>
+          <div class="more" id="cMore"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn ol" id="prevBtn">Back</button>
+      <button class="btn pk" id="flipBtn">Flip</button>
+      <button class="btn gr" id="nextCard">Next</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn olg" id="shuffleBtn">Shuffle cards</button>
+    </div>
+    <div class="keys">Laptop: Space to flip, arrow keys to move</div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="view" id="v-quiz">
+    <div id="qStart" class="panel">
+      <h2>Ready to quiz?</h2>
+      <p>20 mixed questions: multiple choice, true or false, and real classroom scenarios. You see the answer and why right after each one.</p>
+      <div class="stack">
+        <button class="btn pk" id="startBtn">Start 20 questions</button>
+        <button class="btn olg" id="startMissed">Practice my missed questions</button>
+      </div>
+    </div>
+
+    <div id="qRun" style="display:none">
+      <div class="prog"><div id="progBar"></div></div>
+      <div class="panel">
+        <div class="qtop"><span class="qnum" id="qNum"></span><span class="chip g" id="qType"></span></div>
+        <div class="qtext" id="qText"></div>
+        <button class="speak-btn" id="qSpeak" style="margin:0 0 4px">🔊 Listen</button>
+        <div class="qctx" id="qCtx" style="display:none"></div>
+        <div class="opts" id="qOpts"></div>
+        <div class="why" id="qWhy"></div>
+        <button class="btn pk" id="nextBtn">Next question</button>
+      </div>
+      <div class="keys">Laptop: press 1 to 4 to answer, Enter for next</div>
+    </div>
+
+    <div id="qEnd" class="panel" style="display:none">
+      <h2 id="endTitle"></h2>
+      <div class="score" id="endScore"></div>
+      <p id="endMsg"></p>
+      <div class="stack">
+        <button class="btn pk" id="againBtn">New round</button>
+        <button class="btn olg" id="endMissed">Practice my missed questions</button>
+      </div>
+      <div class="reviewlist" id="endReview"></div>
+    </div>
+  </section>
+
+  <!-- MISSED -->
+  <section class="view" id="v-missed">
+    <div class="panel">
+      <h2>Your missed questions</h2>
+      <p>Anything you get wrong lands here. Answer it right later and it disappears. Saved on this device.</p>
+      <div class="stack">
+        <button class="btn pk" id="missedGo">Practice missed questions</button>
+        <button class="btn ol" id="missedClear">Clear list</button>
+      </div>
+      <div class="reviewlist" id="missedList"></div>
+    </div>
+  </section>
+
+  <button id="selRead">🔊 Read highlighted</button>
+  <div id="player"><span id="pLabel">Reading…</span><button id="pPause">Pause</button><button id="pStop">Stop</button></div>
+  <div id="voiceModal"><div class="panel">
+    <h2>Read aloud</h2>
+    <p style="margin-bottom:0">Highlight any text and tap <b>Read highlighted</b>, or tap a <b>Listen</b> button on a lesson, card, or question.</p>
+    <label for="vSel">Voice</label>
+    <select id="vSel"></select>
+    <label for="vRate">Speed: <span id="vRateLbl">1.0</span>x</label>
+    <input type="range" id="vRate" min="0.7" max="1.4" step="0.05" value="1">
+    <div class="row" style="margin-top:14px"><button class="btn olg" id="vTest">Test voice</button><button class="btn pk" id="vClose">Done</button></div>
+    <p class="small">Better voices on iPhone: Settings → Accessibility → Spoken Content → Voices → English. Download any voice marked Enhanced or Premium, then pick it here. Downloaded voices work offline.</p>
+  </div></div>
+
+  <footer>You've got this. One card at a time. 💗</footer>
+</div>
+
+<script>
+const TOPICS = {
+ "all": "All topics",
+ "std": "Objectives and Standards",
+ "strat": "Instructional Strategies",
+ "theory": "Educational Theories",
+ "assess": "Assessment Strategies",
+ "data": "Using Assessment Data",
+ "diff": "Principles of Differentiation",
+ "adapt": "Differentiated Strategies",
+ "crt": "Culturally Responsive Teaching"
+};
+
+/* ---------- FLASHCARDS ---------- */
+const CARDS = [
+{
+"k": "std",
+"t": "Academic standards",
+"d": "Outline what students should learn and achieve at each grade level across various subjects.",
+"tip": "Standards = the WHAT for each grade. Objectives = the daily steps to get there.",
+"p": "The official list of what kids should know and be able to do by the end of each grade.",
+"ex": "TEKS 1.8.C says first graders describe the problem, events, and resolution of a story. That's an academic standard.",
+"m": [
+"Picture it: Standards are the finish line for the whole year.",
+"Sounds like: STANDards = where every student needs to STAND by the end of the grade."
+]
+},
+{
+"k": "std",
+"t": "State standards",
+"d": "Established by individual states, they define the knowledge and skills students need at each grade level across various subjects.",
+"tip": "Each state writes its own. Texas = TEKS.",
+"p": "Your state's own list of what kids should learn in each grade.",
+"ex": "Texas uses the TEKS. Your Task 1 lesson used TEKS 1.8.C.",
+"m": [
+"Your hook: TEKS = Texas. State standards are the ones with your state's name on them.",
+"State = your state's rules for school."
+]
+},
+{
+"k": "std",
+"t": "National standards",
+"d": "A cohesive set of educational guidelines that outline what students across the entire country should know and be able to achieve in various subject areas.",
+"tip": "National = the whole country. State = one state.",
+"p": "Guidelines for what students across the whole country should know.",
+"ex": "The Common Core State Standards and the national standards from groups like NCTM (math) and NGSS (science) are used across many states.",
+"m": [
+"Picture it: National = a map of the whole USA. State = just Texas on that map.",
+"Size: National is big (country), state is smaller (one state)."
+]
+},
+{
+"k": "std",
+"t": "Objectives",
+"d": "Specific, measurable goals set by educators to guide student learning toward achieving standards.",
+"tip": "Objectives are measurable. If you can't see it or count it, it's not an objective.",
+"p": "The specific goal for a lesson. It says exactly what students will do and how well.",
+"ex": "“After a read aloud, students will describe the problem, three events, and the resolution with 4 of 5 correct.” That's an objective.",
+"m": [
+"Sounds like: OBJECTive = the OBJECT you can see. You must be able to watch students do it.",
+"Steps: The standard is the staircase, objectives are the steps."
+]
+},
+{
+"k": "std",
+"t": "Scope and sequence",
+"d": "Charts the progression of standards, specifying instruction order and timing.",
+"tip": "Scope = WHAT is covered. Sequence = in what ORDER.",
+"p": "A map of what gets taught and in what order across the year.",
+"ex": "A math scope and sequence: place value in September, addition in October, subtraction in November.",
+"m": [
+"Split it: SCOPE = how much ground you cover. SEQUENCE = the order, like a sequence of steps.",
+"Picture it: A road trip map. Scope is all the cities, sequence is which one you hit first."
+]
+},
+{
+"k": "std",
+"t": "Spiraling curriculum",
+"d": "Reintroduces topics with increasing complexity at different grade levels.",
+"tip": "Same topic, deeper every time it comes back.",
+"p": "Topics come back again and again, a little harder each time.",
+"ex": "Fractions in 2nd grade (halves), again in 4th grade (adding fractions), again in 6th (dividing fractions).",
+"m": [
+"Picture it: A spiral staircase. You pass the same spot, but higher up each time.",
+"Sounds like: Spiral = Same topic, Spiraling up."
+]
+},
+{
+"k": "std",
+"t": "Condition",
+"d": "The specific circumstances under which the assessment takes place or learning occurs, including any necessary tools or resources.",
+"tip": "The WHEN or WITH WHAT part of an objective. “Given a calculator...” “After a read aloud...”",
+"p": "The situation students will be in when they show the skill.",
+"ex": "In “Without a calculator, students will add two digit numbers with 90% accuracy,” the condition is “without a calculator.”",
+"m": [
+"Order: Objectives go C, B, C: Condition, Behavior, Criterion. Like the ABCs, but CBC.",
+"Clue words: Given, After, Using, Without = condition."
+]
+},
+{
+"k": "std",
+"t": "Behavior",
+"d": "The action or skill students are expected to demonstrate to produce observable and measurable outcomes.",
+"tip": "Must be an action verb you can see: describe, list, solve, write. NOT understand, know, or learn.",
+"p": "What the student will actually DO.",
+"ex": "In “students will describe the problem,” the behavior is “describe.”",
+"m": [
+"Rule: If you can't watch them do it, it's not a behavior. You can't watch someone “understand.”",
+"Clue: The behavior is the verb right after “students will.”"
+]
+},
+{
+"k": "std",
+"t": "Measurable criterion",
+"d": "Establishes the benchmarks for success, clearly defining how student achievements will be evaluated and what the mastery level is.",
+"tip": "The HOW WELL part: 80%, 4 out of 5, 3 times in a row.",
+"p": "The number that tells you the student mastered it.",
+"ex": "“With 90% accuracy” or “4 out of 5 parts correct” is the criterion.",
+"m": [
+"Sounds like: CRITERION = the CRITERIA for passing. Usually a number.",
+"Clue: Look for the percent or the “out of.”"
+]
+},
+{
+"k": "strat",
+"t": "Direct instruction",
+"d": "A structured, teacher-led approach to teaching focused on clear instructions and learning expectations.",
+"tip": "Teacher leads. Explicit, step by step. Best for new skills. Often uses I do, we do, you do.",
+"p": "The teacher clearly shows and explains, then students practice.",
+"ex": "Your Task 1 lesson: you modeled finding the problem (I do), practiced with partners (we do), then students did the resolution alone (you do).",
+"m": [
+"Picture it: The teacher is DIRECTing traffic. Clear signals, everyone knows what to do.",
+"Your hook: Your frog lesson was direct instruction."
+]
+},
+{
+"k": "strat",
+"t": "Indirect instruction",
+"d": "A learner-centered approach emphasizing higher levels of learner involvement, such as problem-solving, case studies, and critical thinking.",
+"tip": "Student centered. Teacher guides from the side. Problem solving, inquiry, case studies.",
+"p": "Students figure things out through problems and thinking, with the teacher guiding.",
+"ex": "Students get a case study about a town's water problem and work out possible solutions.",
+"m": [
+"Opposite: Direct = teacher in front. Indirect = teacher on the side, students in the driver's seat.",
+"Clue words: problem solving, case study, critical thinking, inquiry = indirect."
+]
+},
+{
+"k": "strat",
+"t": "Discovery/experiential learning",
+"d": "Learning strategies involving students in active engagement through real-world experiences, exploration, and reflection.",
+"tip": "Learn by DOING and EXPLORING, then reflecting. Includes role play and simulations.",
+"p": "Students learn by trying things hands on in real world situations, then thinking about what happened.",
+"ex": "Students plant seeds, change the amount of water, and record what happens to the plants.",
+"m": [
+"Sounds like: EXPERIENTial = learn from EXPERIENCE.",
+"Picture it: A field trip, a science lab, a garden. Hands dirty, mind working."
+]
+},
+{
+"k": "strat",
+"t": "Role play",
+"d": "Students step into the shoes of others, acting out scenarios that require them to navigate through problems and perspectives that are not their own.",
+"tip": "Acting as SOMEONE ELSE to understand their point of view.",
+"p": "Students pretend to be another person to understand how that person thinks or feels.",
+"ex": "Students act as a shop owner and a customer to practice solving a disagreement.",
+"m": [
+"Picture it: Role = a character in a play. You become someone else.",
+"Pair it: Role play = PEOPLE and perspectives. Simulation = PROCESSES and systems."
+]
+},
+{
+"k": "strat",
+"t": "Simulations",
+"d": "Recreating complex real-world processes in a classroom setting, allowing students to interact with the material being covered in a direct and hands-on manner.",
+"tip": "A practice version of a real world PROCESS: a mock election, a pretend store, a stock market game.",
+"p": "A pretend version of a real system that students work inside.",
+"ex": "Students run a mock election with candidates, voter registration, and ballots.",
+"m": [
+"Sounds like: SIMulation = like the SIMS game. You run a pretend world.",
+"Pair it: Simulation = the whole system. Role play = one person's shoes."
+]
+},
+{
+"k": "strat",
+"t": "Independent study",
+"d": "Allows learners to progress at their own pace and pursue interests, often requiring self-motivation and discipline.",
+"tip": "Own pace, own interests. Needs self motivation.",
+"p": "Students work on their own, at their own speed, often on a topic they choose.",
+"ex": "A student who loves space researches black holes and creates a presentation on her own schedule.",
+"m": [
+"Your hook: WGU is independent study. Your own pace, your own motivation.",
+"Picture it: A student alone at a desk with headphones, totally locked in."
+]
+},
+{
+"k": "strat",
+"t": "Cooperative learning",
+"d": "A strategy that organizes classroom activities into academic and social learning experiences, with students working in groups to complete tasks.",
+"tip": "Groups working together toward a shared task. Builds academic AND social skills.",
+"p": "Students work together in groups to finish a task.",
+"ex": "Think pair share, jigsaw, and the partner talk in your frog lesson are cooperative learning.",
+"m": [
+"Sounds like: CO-operate = work together, like CO-workers.",
+"Two for one: Cooperative learning teaches the content AND how to work with people."
+]
+},
+{
+"k": "strat",
+"t": "Heterogenous group",
+"d": "A group composed of a variety of ability levels.",
+"tip": "HETERO = different. Mixed abilities.",
+"p": "A group with students at different levels.",
+"ex": "Pairing a strong reader with a student who is still building skills, like in your Task 3 paper.",
+"m": [
+"Sounds like: HETERO = different (heterosexual = different sexes).",
+"Picture it: A mixed bag of candy, all different kinds."
+]
+},
+{
+"k": "strat",
+"t": "Homogenous group",
+"d": "A group composed of one ability level.",
+"tip": "HOMO = same. Same ability level.",
+"p": "A group where everyone is at about the same level.",
+"ex": "A small reading group of four students who all need help with short vowel sounds.",
+"m": [
+"Sounds like: HOMO = same (homogenized milk is all the same throughout).",
+"Picture it: A bag of only red candies."
+]
+},
+{
+"k": "strat",
+"t": "Flexible grouping",
+"d": "A teaching strategy that allows educators to personalize instruction to meet the unique needs of students.",
+"tip": "Groups CHANGE based on data and the task. Nobody is stuck in one group all year.",
+"p": "Groups change often depending on what students need right now.",
+"ex": "Monday a student is in a reteach group for fractions. Wednesday, after mastering it, she moves to an enrichment group.",
+"m": [
+"Sounds like: FLEXible = it bends and changes.",
+"Trap buster: Flexible grouping is the opposite of permanent “low group” labels."
+]
+},
+{
+"k": "strat",
+"t": "Gradual release (I do, we do, you do)",
+"d": "A model where responsibility moves from the teacher to the student: the teacher models, the class practices together, then students work independently (Pearson & Gallagher, 1983).",
+"tip": "I do (model), we do (guided practice), you do (independent practice).",
+"p": "The teacher shows it, then everyone tries it together, then students do it alone.",
+"ex": "Your Task 1 lesson followed this exact order.",
+"m": [
+"Your hook: Your frog lesson. You found the problem, partners did the events, students did the resolution.",
+"Picture it: Teaching a kid to ride a bike. You ride, you hold the seat, you let go."
+]
+},
+{
+"k": "theory",
+"t": "Behaviorism",
+"d": "A theory of learning focused on observable behaviors and the ways they are learned through interaction with the environment.",
+"tip": "Rewards and consequences shape behavior. Think Skinner and Pavlov.",
+"p": "Learning is about behavior you can see, shaped by rewards and consequences.",
+"ex": "A sticker chart, token economy, or praise right after a correct answer.",
+"m": [
+"Sounds like: BEHAVIORism = only cares about BEHAVIOR you can see, not what's inside the head.",
+"Names: Skinner (rewards) and Pavlov (the dog and the bell)."
+]
+},
+{
+"k": "theory",
+"t": "Cognitivism",
+"d": "Focuses on the inner mental activities of the mind and understanding how people think, understand, and remember information.",
+"tip": "What happens INSIDE the brain: memory, thinking, processing. Think Piaget.",
+"p": "Learning is about how the brain takes in, organizes, and remembers information.",
+"ex": "Using graphic organizers, chunking information, and mnemonics to help students remember.",
+"m": [
+"Sounds like: COGNITIVism = COGNITION = thinking. The brain is like a computer storing files.",
+"Contrast: Behaviorism looks at the outside (actions). Cognitivism looks inside (thinking)."
+]
+},
+{
+"k": "theory",
+"t": "Constructivism",
+"d": "Suggests learners construct knowledge through their experiences rather than absorbing information from a teacher.",
+"tip": "Students BUILD their own understanding through experience. Think Piaget and Vygotsky, discovery learning.",
+"p": "Students build their own understanding by doing, exploring, and connecting to what they already know.",
+"ex": "Students explore with magnets to figure out what sticks, instead of being told first.",
+"m": [
+"Sounds like: CONSTRUCTivism = CONSTRUCTION. Students build knowledge like a house, brick by brick.",
+"Pair it: Constructivism goes with discovery learning and hands on activities."
+]
+},
+{
+"k": "theory",
+"t": "Connectivism",
+"d": "A learning theory for the digital age, emphasizing the role of social and technological networks in the learning process.",
+"tip": "Learning through NETWORKS: people, internet, technology. The newest theory.",
+"p": "Learning happens through connections with people and technology, like online networks.",
+"ex": "Students use online forums, video calls with experts, and shared digital documents to learn together.",
+"m": [
+"Sounds like: CONNECTivism = CONNECTED, like Wi-Fi and social media.",
+"Picture it: A web of phones and laptops all linked together."
+]
+},
+{
+"k": "theory",
+"t": "Zone of proximal development (ZPD)",
+"d": "Vygotsky's concept describing the difference between what a learner can do without help and what they can achieve with guidance and encouragement from a skilled partner.",
+"tip": "The sweet spot: too hard alone, doable WITH help. Vygotsky.",
+"p": "The skills a student can do with help but can't do alone yet.",
+"ex": "A student can't read a new book alone but can with a teacher helping sound out the hard words. That book is in her ZPD.",
+"m": [
+"Picture it: Three circles. Can do alone (inside), can do with help (ZPD, the middle), can't do yet (outside).",
+"Name: V for Vygotsky, V for the help in the middle."
+]
+},
+{
+"k": "theory",
+"t": "Scaffolding",
+"d": "A method that enables a student to solve a problem, carry out a task, or achieve a goal through the provision of tailored support by an instructor.",
+"tip": "Temporary support that is REMOVED as the student gets stronger. Works inside the ZPD.",
+"p": "Extra support the teacher gives, then slowly takes away as the student gets it.",
+"ex": "Sentence stems, picture cards, and a worked example that the student stops needing over time.",
+"m": [
+"Picture it: Scaffolding on a building comes DOWN when the building can stand on its own.",
+"Pair it: ZPD is WHERE to teach. Scaffolding is HOW you help there."
+]
+},
+{
+"k": "theory",
+"t": "Lev Vygotsky",
+"d": "Psychologist who said learning is social and happens best with help from a more knowledgeable other. Known for the zone of proximal development.",
+"tip": "Vygotsky = social learning + ZPD + more knowledgeable other.",
+"p": "The ZPD guy. He believed kids learn best with help from someone who knows more.",
+"ex": "Partner work where a stronger reader helps a peer follows Vygotsky's ideas.",
+"m": [
+"Sounds like: Vy-GOT-sky = you GOT help from someone.",
+"Social: Vygotsky = learning together."
+]
+},
+{
+"k": "theory",
+"t": "Jean Piaget",
+"d": "Psychologist who described stages of cognitive development and believed children actively build knowledge through experience.",
+"tip": "Piaget = stages of development + kids build knowledge themselves. Linked to cognitivism and constructivism.",
+"p": "He said kids go through thinking stages and learn by exploring on their own.",
+"ex": "Letting young children use blocks and real objects before abstract numbers follows Piaget.",
+"m": [
+"Sounds like: Pia-GET = kids GET it in stages.",
+"Contrast: Piaget = the child explores alone. Vygotsky = the child learns with help."
+]
+},
+{
+"k": "assess",
+"t": "Formative assessment",
+"d": "Used during the learning process to gauge student understanding and guide further learning.",
+"tip": "DURING learning. Low stakes. Used to adjust teaching.",
+"p": "Quick checks while learning is happening, so the teacher knows what to fix.",
+"ex": "Exit tickets, thumbs up, whiteboard answers, listening to partner talk.",
+"m": [
+"Sounds like: FORMative = it helps FORM the learning while it's still being shaped.",
+"Soup trick: When the cook tastes the soup, that's formative. When the guest tastes it, that's summative."
+]
+},
+{
+"k": "assess",
+"t": "Summative assessment",
+"d": "A tool for evaluating student learning at specific points, such as at the end of a unit, semester, or academic year; often in the form of a quiz or test.",
+"tip": "At the END. Measures what was learned. Higher stakes.",
+"p": "The test at the end that shows what students learned.",
+"ex": "Your Task 2 story map the day after the lesson, a unit test, or a final exam.",
+"m": [
+"Sounds like: SUMmative = the SUM total at the end.",
+"Soup trick: When the guest tastes the soup, it's done. That's summative."
+]
+},
+{
+"k": "assess",
+"t": "Pre-assessment",
+"d": "Initial stage involves methods like screening tests, diagnostic assessments, and pre-tests, which help educators understand students' baseline knowledge before instruction begins.",
+"tip": "BEFORE teaching. Finds the starting point (baseline).",
+"p": "A check before teaching to see what students already know.",
+"ex": "The picture sort before your lesson in Task 3, or a pretest at the start of a unit.",
+"m": [
+"Sounds like: PRE = before. Pre-game, pre-test.",
+"Order: Pre (before) → Formative (during) → Summative (after)."
+]
+},
+{
+"k": "assess",
+"t": "Performance-based learning",
+"d": "An approach to teaching and learning that emphasizes students being able to do, or perform, specific skills as a result of instruction.",
+"tip": "Focus on DOING the skill, not just knowing about it.",
+"p": "Teaching with the goal that students can actually do the skill.",
+"ex": "Instead of only reading about persuasive writing, students write and deliver a persuasive speech.",
+"m": [
+"Sounds like: PERFORMance = students PERFORM, like on a stage.",
+"Pair it: Performance-based learning is the teaching. Performance-based assessment is how it's graded."
+]
+},
+{
+"k": "assess",
+"t": "Performance-based assessment",
+"d": "An individual task, such as a research paper, presentation, or report, completed by a candidate and evaluated based on a rubric; a formal testing process that demonstrates competency for a course.",
+"tip": "A task graded with a rubric. Your WGU Tasks 1, 2, and 3 are performance assessments.",
+"p": "A project or task that shows you can do the skill, graded with a rubric.",
+"ex": "Your recorded lesson video and papers for this class.",
+"m": [
+"Your hook: PA at WGU = Performance Assessment = your tasks.",
+"Clue: If it's graded with a rubric and it's a project, it's performance based."
+]
+},
+{
+"k": "assess",
+"t": "Scales",
+"d": "Offer a broader overview, usually encapsulating overall performance levels.",
+"tip": "Scale = the big picture levels (1 to 4). Rubric = detailed criteria for each part.",
+"p": "A simple set of levels that shows overall performance.",
+"ex": "A 1 to 4 scale: 1 beginning, 2 developing, 3 proficient, 4 advanced.",
+"m": [
+"Picture it: A bathroom scale gives ONE number. A scale gives the overall level.",
+"Contrast: Scale = broad. Rubric = detailed."
+]
+},
+{
+"k": "assess",
+"t": "Rubric",
+"d": "A detailed guide that helps teachers assess the quality of students' work based on defined criteria, covering various levels of achievement from basic to advanced.",
+"tip": "Criteria down the side, levels across the top, descriptors in each box.",
+"p": "A detailed scoring chart that shows what each level of quality looks like.",
+"ex": "Your WGU rubric: Not Evident, Approaching Competence, Competent for each part.",
+"m": [
+"Your hook: The WGU rubric you used for Tasks 1 to 3.",
+"Picture it: A grid. Rows = what's graded. Columns = how well."
+]
+},
+{
+"k": "assess",
+"t": "Transparency and clarity",
+"d": "Elements that ensure the criteria used to assess students are clear and understandable, making the assessment process fair and transparent.",
+"tip": "Students know HOW they'll be graded BEFORE they start.",
+"p": "Making grading rules clear so students know exactly what's expected.",
+"ex": "Handing out the rubric before a project and going over it together.",
+"m": [
+"Picture it: Transparent = see through glass. No hidden rules.",
+"Fairness: If students can't see the target, they can't hit it."
+]
+},
+{
+"k": "assess",
+"t": "Descriptor",
+"d": "Defines what performance looks like at each level of a rubric; must be clear and detailed enough for students to understand what is expected of them and how they can improve.",
+"tip": "The words INSIDE each rubric box.",
+"p": "The sentence in each rubric box that describes what that level looks like.",
+"ex": "Competent: “The recorded lesson is aligned to grade level state standards...”",
+"m": [
+"Sounds like: DESCRIPTor = DESCRIBES each level.",
+"Location: Descriptors live in the boxes of the rubric grid."
+]
+},
+{
+"k": "data",
+"t": "Feedback",
+"d": "Information or comments about an individual's performance; offers guidance, evaluation, or correction to support improving, growing, or maintaining desired standards or competencies.",
+"tip": "Best feedback is timely, specific, and actionable (tells them what to do next).",
+"p": "Comments that tell a student how they did and how to get better.",
+"ex": "“Your problem box is correct. In event 2, check the order. What happened right after Zuri wiggled?”",
+"m": [
+"Rule of 3: Good feedback is Timely, Specific, and Actionable.",
+"Contrast: “Good job” is praise, not feedback. Feedback tells them what to do next."
+]
+},
+{
+"k": "data",
+"t": "Data",
+"d": "Any information that can be used systematically to inform instructional practice.",
+"tip": "Test scores, observations, work samples, exit tickets, attendance. Anything that guides teaching.",
+"p": "Any information about students that helps a teacher decide what to teach next.",
+"ex": "Exit ticket results show 8 students confused the problem and resolution, so the teacher reteaches it in a small group.",
+"m": [
+"Picture it: Data is a GPS. It tells you where students are and which way to go.",
+"Cycle: Collect, analyze, adjust teaching, reassess."
+]
+},
+{
+"k": "diff",
+"t": "Differentiation",
+"d": "An attempt to address the variation of learners in the classroom through multiple approaches that modify instruction and curriculum to match the individual needs of students.",
+"tip": "Based on readiness, interest, and learning profile. Teachers can change content, process, product, or environment.",
+"p": "Changing how you teach so different students can all reach the goal.",
+"ex": "Same story map goal, but some students draw, some write, and some use picture cards.",
+"m": [
+"Sounds like: DIFFERentiation = DIFFERENT students, DIFFERENT paths, SAME goal.",
+"Formula: Teachers differentiate CPPE (content, process, product, environment) based on RIP (readiness, interest, profile)."
+]
+},
+{
+"k": "diff",
+"t": "Content",
+"d": "Refers to the knowledge, understanding, and skills (KUD) students are expected to acquire.",
+"tip": "WHAT students learn. KUD = Know, Understand, Do.",
+"p": "The material students are learning.",
+"ex": "Giving some students a shorter story or a text at their reading level.",
+"m": [
+"KUD: Know, Understand, Do.",
+"Question: Content answers WHAT are they learning?"
+]
+},
+{
+"k": "diff",
+"t": "Process",
+"d": "Focuses on how students make sense of and internalize the content.",
+"tip": "HOW students learn it: activities, practice, grouping.",
+"p": "The activities students do to understand the material.",
+"ex": "Some students use manipulatives, some use a graphic organizer, some work with a partner.",
+"m": [
+"Question: Process answers HOW do they make sense of it?",
+"Picture it: Process is the cooking. Content is the ingredients. Product is the meal."
+]
+},
+{
+"k": "diff",
+"t": "Product",
+"d": "Refers to how students demonstrate their understanding of the content.",
+"tip": "How they SHOW what they learned: poster, test, video, presentation.",
+"p": "What students make or do to show they learned it.",
+"ex": "Students choose to show the plot by drawing a comic, writing a summary, or retelling it aloud.",
+"m": [
+"Question: Product answers HOW do they show it?",
+"Picture it: The product is the finished meal on the plate."
+]
+},
+{
+"k": "diff",
+"t": "Affect/learning environment",
+"d": "Encompasses the physical and emotional atmosphere of the classroom.",
+"tip": "The room AND the feelings: seating, noise, safety, belonging.",
+"p": "How the classroom looks and feels to students.",
+"ex": "A quiet corner, flexible seating, and a classroom where mistakes are welcome.",
+"m": [
+"Two parts: Physical (the room) + emotional (the feeling).",
+"Sounds like: AFFECT = AFFECTion. How the class makes students feel."
+]
+},
+{
+"k": "diff",
+"t": "Readiness",
+"d": "A student's current knowledge, understanding, and skill level related to a particular learning goal.",
+"tip": "Readiness is not the same as ability. It changes with the topic and with time.",
+"p": "How ready a student is for this specific skill right now.",
+"ex": "A student may be ready for advanced fractions but still building reading fluency.",
+"m": [
+"Formula: RIP = Readiness, Interest, Profile. The three things teachers differentiate by.",
+"Clue: Pre-assessment data tells you readiness."
+]
+},
+{
+"k": "diff",
+"t": "Interests",
+"d": "Topics, activities, or pursuits that capture a student's curiosity and engagement.",
+"tip": "Use what students care about to hook them into the content.",
+"p": "What students like and care about.",
+"ex": "Letting a student who loves basketball practice percentages with free throw stats.",
+"m": [
+"Formula: RIP = Readiness, Interest, Profile.",
+"Clue: Interest surveys tell you interests."
+]
+},
+{
+"k": "diff",
+"t": "Learning profile",
+"d": "How a student learns best, shaped by preferences, culture, gender, and strengths, such as working alone or in groups, or learning through visuals or movement.",
+"tip": "HOW a student prefers to learn.",
+"p": "The ways a student learns best.",
+"ex": "A student who learns best through movement acts out each story event.",
+"m": [
+"Formula: RIP = Readiness, Interest, Profile.",
+"Picture it: A profile is like a social media bio for how you learn."
+]
+},
+{
+"k": "adapt",
+"t": "Adaptation",
+"d": "A change made to the learning environment, available equipment, or how assignments/assessments are completed by a student.",
+"tip": "WGU version: changes the environment, equipment, or HOW the work gets done.",
+"p": "Changing the setting, tools, or the way a student completes work.",
+"ex": "A slant board, a pencil grip, a quieter testing room, or typing instead of handwriting.",
+"m": [
+"Sounds like: ADAPTation = ADAPT the space and tools.",
+"Clue: Room, equipment, or how the assignment is completed = adaptation."
+]
+},
+{
+"k": "adapt",
+"t": "Accommodation",
+"d": "A change made to the way instruction is delivered or to the way curriculum is accessed by a student.",
+"tip": "Changes HOW students access learning. SAME expectations.",
+"p": "A change in how the student gets the information. They still learn the same thing.",
+"ex": "Audiobooks, extended time, large print, read aloud directions.",
+"m": [
+"Sounds like: ACCommodation = ACCESS. Same content, different door in.",
+"Rule: Accommodation changes HOW. Modification changes WHAT."
+]
+},
+{
+"k": "adapt",
+"t": "Modifications",
+"d": "A change to the content and skills that students are expected to learn/master.",
+"tip": "Changes WHAT students learn. LOWER or different expectations.",
+"p": "A change in what the student is expected to learn.",
+"ex": "Fewer spelling words, an easier reading level, fewer answer choices, or different grade level goals.",
+"m": [
+"Sounds like: MODIFY = change the WHAT. MOdification = MOre different.",
+"Test: If the expectation itself changes, it's a modification."
+]
+},
+{
+"k": "adapt",
+"t": "Gifted and talented",
+"d": "Demonstrates exceptional abilities in one or more areas, such as intellectual, creative, artistic, leadership, or specific academic fields.",
+"tip": "Gifted students need differentiation too: enrichment, depth, acceleration.",
+"p": "Students with exceptional abilities in one or more areas.",
+"ex": "Giving early finishers an extension question, like thinking of another way Zuri could escape.",
+"m": [
+"Remember: Gifted kids also need challenge. Boredom is a need too.",
+"Strategies: Enrichment (go deeper), acceleration (go faster), compacting (skip what they know)."
+]
+},
+{
+"k": "adapt",
+"t": "English learners (ELs)",
+"d": "Individuals who are learning English as a second (or third, etc.) language; individuals may have varying levels of proficiency in English and may need additional support to access the curriculum.",
+"tip": "Supports: visuals, sentence stems, vocabulary preteaching, partner talk.",
+"p": "Students learning English in addition to their home language.",
+"ex": "Picture icons and sentence stems in your frog lesson supported ELs.",
+"m": [
+"Your hook: Your stop sign, footprints, and check mark icons supported ELs.",
+"Remember: Language need is NOT a disability. Remember the Diana case."
+]
+},
+{
+"k": "adapt",
+"t": "Attention deficit hyperactivity disorder (ADHD)",
+"d": "A neurodevelopmental disorder characterized by inattention, hyperactivity, and impulsivity; students with ADHD may struggle with focus, organization, and time management.",
+"tip": "Supports: chunking, movement breaks, checklists, timers, preferential seating.",
+"p": "A condition that makes focusing, sitting still, and organizing hard.",
+"ex": "Breaking a long assignment into three short parts with a checklist.",
+"m": [
+"Three parts: Inattention, hyperactivity, impulsivity.",
+"Supports: Chunk it, move it, check it off."
+]
+},
+{
+"k": "adapt",
+"t": "Learning disability",
+"d": "A neurologically based processing disorder that can interfere with a specific area of learning, such as reading, writing, or math.",
+"tip": "Specific area (reading = dyslexia, math = dyscalculia, writing = dysgraphia). Not low intelligence.",
+"p": "A brain based difference that makes one area of learning harder.",
+"ex": "A student with dyslexia uses audiobooks to access grade level texts.",
+"m": [
+"Remember: LD = one Specific area, normal or high intelligence.",
+"Dys trio: Dyslexia (reading), dysgraphia (writing), dyscalculia (math)."
+]
+},
+{
+"k": "adapt",
+"t": "Competency-based education (CBE)",
+"d": "Candidates progress through courses as soon as they can prove they have mastered the material, rather than advancing only when the semester or term ends.",
+"tip": "Move on when you master it, not when the calendar says. That's WGU.",
+"p": "You move forward as soon as you prove you've mastered something.",
+"ex": "WGU: you pass D637 as soon as your tasks and test are done, not at the end of a semester.",
+"m": [
+"Your hook: CBE = WGU. Pass it, move on.",
+"Contrast: Traditional = time is fixed, learning varies. CBE = learning is fixed, time varies."
+]
+},
+{
+"k": "adapt",
+"t": "Competency",
+"d": "The capability to apply or use a set of related knowledge, skills, abilities, and intellectual behaviors required to successfully perform tasks in a defined setting.",
+"tip": "Not just knowing. Being able to APPLY it in a real setting.",
+"p": "Being able to actually use what you know to do a job well.",
+"ex": "Planning and teaching a standards based lesson shows competency in instructional planning.",
+"m": [
+"Sounds like: COMPETENT = can do it for real.",
+"Your hook: WGU rubrics say “Competent” when you've shown it."
+]
+},
+{
+"k": "crt",
+"t": "Culturally responsive teaching",
+"d": "An approach that acknowledges and values students' customs, characteristics, experiences, and perspectives to improve classroom instruction.",
+"tip": "Use students' cultures as a STRENGTH and bridge to learning. Linked to Geneva Gay.",
+"p": "Teaching that respects and uses students' cultures and experiences to help them learn.",
+"ex": "Using books with characters who look like your students and examples from their communities.",
+"m": [
+"Sounds like: RESPONSIVE = RESPOND to who your students are.",
+"Mirror: Students should see themselves in the lessons, like a mirror."
+]
+},
+{
+"k": "crt",
+"t": "Culturally responsive pedagogy (CRP)",
+"d": "A teaching method that recognizes that students learn differently and that these differences are connected to their family structure, cultural identity, language, and background.",
+"tip": "Pedagogy = the method of teaching. CRP connects learning differences to culture, family, language, and background.",
+"p": "A way of teaching built on the idea that culture and background shape how students learn.",
+"ex": "Allowing collaborative work for students from cultures that value group learning, and connecting lessons to home experiences.",
+"m": [
+"Sounds like: PEDagogy = the PATH of teaching.",
+"Contrast: CRT is the approach (valuing cultures). CRP is the method (teaching to how culture shapes learning)."
+]
+},
+{
+"k": "crt",
+"t": "Funds of knowledge",
+"d": "The knowledge, skills, and experiences students gain from their homes, families, and communities that teachers can build on in the classroom.",
+"tip": "Students bring knowledge from home. It's an asset, not a deficit.",
+"p": "What students already know from their families and communities.",
+"ex": "A student who helps at the family restaurant uses that experience in a math lesson on measurement and money.",
+"m": [
+"Picture it: Students come to school with a backpack full of knowledge from home.",
+"Asset thinking: Start from what students HAVE, not what they lack."
+]
+},
+{
+"k": "crt",
+"t": "Deficit thinking vs. asset-based thinking",
+"d": "Deficit thinking sees students' cultures or backgrounds as problems to fix. Asset-based thinking sees them as strengths to build on.",
+"tip": "CRT is always asset based.",
+"p": "Deficit = seeing what's wrong. Asset = seeing what's strong.",
+"ex": "Deficit: “Her family doesn't speak English, so she's behind.” Asset: “She's bilingual, which is a strength we can use.”",
+"m": [
+"Picture it: Glass half empty (deficit) vs. half full (asset).",
+"Test trap: Any answer that blames a student's culture is wrong."
+]
+}
+];
+
+/* ---------- WRITTEN QUESTIONS ---------- */
+const TF=["True","False"];
+const QS = [
+{
+"k": "std",
+"y": "mc",
+"q": "Which objective is written correctly with a condition, behavior, and criterion?",
+"o": [
+"Given a map, students will label 8 of 10 states correctly.",
+"Students will understand the states of the U.S.",
+"Students will learn about maps.",
+"Students will enjoy the geography unit."
+],
+"a": 0,
+"w": "“Given a map” is the condition, “label” is an observable behavior, and “8 of 10” is the criterion."
+},
+{
+"k": "std",
+"y": "mc",
+"q": "In the objective “After reading a passage, students will identify the main idea with 80% accuracy,” what is the criterion?",
+"o": [
+"With 80% accuracy",
+"After reading a passage",
+"Identify",
+"The main idea"
+],
+"a": 0,
+"w": "The criterion is the benchmark for success, usually a number or percent."
+},
+{
+"k": "std",
+"y": "mc",
+"q": "In the objective “Using a number line, students will add fractions with like denominators with 90% accuracy,” what is the condition?",
+"o": [
+"Using a number line",
+"Add fractions",
+"With 90% accuracy",
+"Like denominators"
+],
+"a": 0,
+"w": "The condition is the circumstance or tool: “using a number line.”"
+},
+{
+"k": "std",
+"y": "mc",
+"q": "Which verb is NOT measurable and should be avoided in an objective?",
+"o": [
+"Understand",
+"Describe",
+"Compare",
+"Solve"
+],
+"a": 0,
+"w": "You can't observe “understand.” Use verbs you can see or count, like describe, compare, or solve."
+},
+{
+"k": "std",
+"y": "tf",
+"q": "True or false: Objectives should be written first, and then the teacher finds a standard that matches them.",
+"o": [
+"True",
+"False"
+],
+"a": 1,
+"w": "False. Teachers start with the standard, then write objectives that break it into measurable steps."
+},
+{
+"k": "std",
+"y": "sc",
+"q": "A teacher notices her 3rd grade fractions unit repeats ideas from 2nd grade but with harder problems. What does this reflect?",
+"o": [
+"Spiraling curriculum",
+"Scope and sequence",
+"Flexible grouping",
+"Summative assessment"
+],
+"a": 0,
+"w": "A spiraling curriculum brings topics back with increasing complexity."
+},
+{
+"k": "std",
+"y": "sc",
+"q": "A new teacher wants to know what order to teach the year's math standards and how long to spend on each. What should she look at?",
+"o": [
+"The scope and sequence",
+"A rubric",
+"A pre-assessment",
+"The learning profile"
+],
+"a": 0,
+"w": "Scope and sequence charts the order and timing of standards."
+},
+{
+"k": "std",
+"y": "tf",
+"q": "True or false: State standards are created by each individual state, while national standards apply across the whole country.",
+"o": [
+"True",
+"False"
+],
+"a": 0,
+"w": "True. Texas writes the TEKS. National standards are guidelines for the whole country."
+},
+{
+"k": "std",
+"y": "mc",
+"q": "Why should learning objectives be aligned with standards?",
+"o": [
+"So classroom activities target the benchmarks students are expected to reach",
+"So lessons are more fun",
+"So teachers can skip assessment",
+"So every student gets the same grade"
+],
+"a": 0,
+"w": "Alignment ensures that what happens daily in class builds toward the standard."
+},
+{
+"k": "std",
+"y": "sc",
+"q": "A standard says students will “compare and contrast two characters.” Which objective is best aligned?",
+"o": [
+"After reading two stories, students will use a Venn diagram to compare and contrast two characters with 4 of 5 details correct.",
+"Students will read two stories.",
+"Students will understand characters.",
+"Students will draw their favorite character."
+],
+"a": 0,
+"w": "It uses the same verb as the standard (compare and contrast) and includes a condition and criterion."
+},
+{
+"k": "strat",
+"y": "sc",
+"q": "A teacher is introducing a brand new skill that students have never seen. Which strategy fits best?",
+"o": [
+"Direct instruction",
+"Independent study",
+"Discovery learning with no guidance",
+"Role play"
+],
+"a": 0,
+"w": "New skills are best taught explicitly with direct instruction, then practiced with support."
+},
+{
+"k": "strat",
+"y": "sc",
+"q": "Students work in groups to solve a real case study about a local water shortage and present solutions. Which approach is this?",
+"o": [
+"Indirect instruction",
+"Direct instruction",
+"Homogenous grouping",
+"Summative assessment"
+],
+"a": 0,
+"w": "Case studies and problem solving are hallmarks of indirect, learner centered instruction."
+},
+{
+"k": "strat",
+"y": "sc",
+"q": "A history class runs a mock trial where each student plays a lawyer, witness, or juror. Which strategy is the focus?",
+"o": [
+"Role play",
+"Independent study",
+"Direct instruction",
+"Scope and sequence"
+],
+"a": 0,
+"w": "Students step into the shoes of others and act out their perspectives."
+},
+{
+"k": "strat",
+"y": "sc",
+"q": "Students run a pretend store with money, inventory, and customers to learn economics. Which strategy is this?",
+"o": [
+"Simulation",
+"Role play only",
+"Lecture",
+"Pre-assessment"
+],
+"a": 0,
+"w": "A simulation recreates a real world process in the classroom."
+},
+{
+"k": "strat",
+"y": "mc",
+"q": "What is the main difference between heterogenous and homogenous groups?",
+"o": [
+"Heterogenous groups mix ability levels; homogenous groups have one ability level",
+"Heterogenous groups are always larger",
+"Homogenous groups are only for gifted students",
+"There is no difference"
+],
+"a": 0,
+"w": "Hetero = different, homo = same."
+},
+{
+"k": "strat",
+"y": "sc",
+"q": "After an exit ticket, a teacher moves students into new groups for tomorrow based on who mastered the skill. Next week, the groups change again. What is she using?",
+"o": [
+"Flexible grouping",
+"Homogenous grouping only",
+"Independent study",
+"Spiraling curriculum"
+],
+"a": 0,
+"w": "Flexible grouping changes based on current needs and data."
+},
+{
+"k": "strat",
+"y": "tf",
+"q": "True or false: Cooperative learning builds both academic and social skills.",
+"o": [
+"True",
+"False"
+],
+"a": 0,
+"w": "True. Students learn content while practicing teamwork and communication."
+},
+{
+"k": "strat",
+"y": "mc",
+"q": "Which order matches the gradual release of responsibility model?",
+"o": [
+"Teacher models, guided practice together, independent practice",
+"Independent practice, then teacher models",
+"Test first, then teach",
+"Group work only"
+],
+"a": 0,
+"w": "I do, we do, you do (Pearson & Gallagher, 1983)."
+},
+{
+"k": "strat",
+"y": "sc",
+"q": "A motivated student who loves space asks to research black holes on her own and present what she learns. Which strategy fits?",
+"o": [
+"Independent study",
+"Direct instruction",
+"Homogenous grouping",
+"Simulation"
+],
+"a": 0,
+"w": "Independent study lets learners pursue interests at their own pace."
+},
+{
+"k": "strat",
+"y": "sc",
+"q": "Students plant seeds, vary the sunlight each one gets, observe for two weeks, and reflect on what they found. Which approach is this?",
+"o": [
+"Discovery/experiential learning",
+"Direct instruction",
+"Summative assessment",
+"Role play"
+],
+"a": 0,
+"w": "Hands on exploration and reflection through real experience."
+},
+{
+"k": "theory",
+"y": "sc",
+"q": "A teacher gives students tokens for completing work, which they trade for prizes. Which theory is this based on?",
+"o": [
+"Behaviorism",
+"Constructivism",
+"Connectivism",
+"Cognitivism"
+],
+"a": 0,
+"w": "Rewards shaping observable behavior = behaviorism."
+},
+{
+"k": "theory",
+"y": "sc",
+"q": "Students explore magnets on their own to figure out which objects are attracted, building their own understanding before the teacher explains. Which theory?",
+"o": [
+"Constructivism",
+"Behaviorism",
+"Connectivism",
+"None"
+],
+"a": 0,
+"w": "Learners construct knowledge through experience."
+},
+{
+"k": "theory",
+"y": "sc",
+"q": "A teacher uses graphic organizers and chunks information to help students store it in memory. Which theory focuses on these mental processes?",
+"o": [
+"Cognitivism",
+"Behaviorism",
+"Connectivism",
+"Social learning only"
+],
+"a": 0,
+"w": "Cognitivism focuses on how people think, understand, and remember."
+},
+{
+"k": "theory",
+"y": "sc",
+"q": "Students learn by joining an online forum, talking with experts on video calls, and building a shared digital project. Which theory?",
+"o": [
+"Connectivism",
+"Behaviorism",
+"Cognitivism",
+"Pre-assessment"
+],
+"a": 0,
+"w": "Connectivism emphasizes social and technological networks."
+},
+{
+"k": "theory",
+"y": "mc",
+"q": "A student can't solve two step word problems alone but can with a teacher's prompts. These problems are in the student's:",
+"o": [
+"Zone of proximal development",
+"Independent level",
+"Frustration zone with no help possible",
+"Learning profile"
+],
+"a": 0,
+"w": "The ZPD is what a learner can do with guidance but not yet alone."
+},
+{
+"k": "theory",
+"y": "mc",
+"q": "What should happen to scaffolding as a student gains skill?",
+"o": [
+"It is gradually removed",
+"It stays forever",
+"It increases",
+"It is replaced with a test"
+],
+"a": 0,
+"w": "Scaffolding is temporary support that is faded as the student becomes independent."
+},
+{
+"k": "theory",
+"y": "tf",
+"q": "True or false: The zone of proximal development is Piaget's idea.",
+"o": [
+"True",
+"False"
+],
+"a": 1,
+"w": "False. The ZPD is Vygotsky's concept."
+},
+{
+"k": "theory",
+"y": "mc",
+"q": "Which pairing is correct?",
+"o": [
+"Vygotsky: ZPD and learning with a more knowledgeable other",
+"Skinner: ZPD",
+"Piaget: connectivism",
+"Vygotsky: token economies"
+],
+"a": 0,
+"w": "Vygotsky is known for social learning and the ZPD."
+},
+{
+"k": "theory",
+"y": "sc",
+"q": "During the “we do” step, a teacher gives sentence stems and picture cards, then removes them over the next few lessons. What is she doing?",
+"o": [
+"Scaffolding within the ZPD",
+"Behaviorism",
+"Summative assessment",
+"Homogenous grouping"
+],
+"a": 0,
+"w": "Tailored, temporary support that is faded = scaffolding."
+},
+{
+"k": "theory",
+"y": "mc",
+"q": "Which theory looks ONLY at observable behavior, not what happens inside the mind?",
+"o": [
+"Behaviorism",
+"Cognitivism",
+"Constructivism",
+"Connectivism"
+],
+"a": 0,
+"w": "Behaviorism focuses on observable behaviors and environmental reinforcement."
+},
+{
+"k": "assess",
+"y": "mc",
+"q": "Which is an example of formative assessment?",
+"o": [
+"An exit ticket at the end of a lesson",
+"A final exam",
+"A state test",
+"An end of year portfolio grade"
+],
+"a": 0,
+"w": "Exit tickets check understanding during learning so teaching can be adjusted."
+},
+{
+"k": "assess",
+"y": "mc",
+"q": "Which is an example of summative assessment?",
+"o": [
+"An end of unit test",
+"Thumbs up check",
+"Listening to partner talk",
+"A quick whiteboard response"
+],
+"a": 0,
+"w": "Summative assessment measures learning at the end of a unit or period."
+},
+{
+"k": "assess",
+"y": "sc",
+"q": "Before starting a fractions unit, a teacher gives a short test to see what students already know. What type of assessment is this?",
+"o": [
+"Pre-assessment",
+"Summative",
+"Performance-based",
+"Rubric"
+],
+"a": 0,
+"w": "Pre-assessments find baseline knowledge before instruction."
+},
+{
+"k": "assess",
+"y": "tf",
+"q": "True or false: The same quiz can be formative or summative depending on how the teacher uses the results.",
+"o": [
+"True",
+"False"
+],
+"a": 0,
+"w": "True. If results are used to adjust teaching, it's formative. If used to judge final learning, it's summative."
+},
+{
+"k": "assess",
+"y": "mc",
+"q": "What is the main purpose of formative assessment?",
+"o": [
+"To guide and adjust instruction while learning is happening",
+"To assign final grades",
+"To rank students",
+"To replace teaching"
+],
+"a": 0,
+"w": "Formative assessment gauges understanding and guides further learning."
+},
+{
+"k": "assess",
+"y": "mc",
+"q": "What's the difference between a scale and a rubric?",
+"o": [
+"A scale gives a broad overall level; a rubric gives detailed criteria and descriptors for each level",
+"They are the same",
+"A rubric is only for math",
+"A scale is more detailed than a rubric"
+],
+"a": 0,
+"w": "Scales give the big picture. Rubrics break performance into criteria with descriptors."
+},
+{
+"k": "assess",
+"y": "mc",
+"q": "In a rubric, what is a descriptor?",
+"o": [
+"The text that explains what performance looks like at each level",
+"The final score",
+"The student's name",
+"The standard number"
+],
+"a": 0,
+"w": "Descriptors define performance at each level so students know how to improve."
+},
+{
+"k": "assess",
+"y": "sc",
+"q": "A teacher shares the rubric with students before they start a project and goes over each level. Which principle is she following?",
+"o": [
+"Transparency and clarity",
+"Spiraling curriculum",
+"Behaviorism",
+"Homogenous grouping"
+],
+"a": 0,
+"w": "Clear, shared criteria make assessment fair and transparent."
+},
+{
+"k": "assess",
+"y": "sc",
+"q": "Students create and present a persuasive speech, graded with a rubric. What type of assessment is this?",
+"o": [
+"Performance-based assessment",
+"Pre-assessment",
+"Multiple choice test",
+"Screening test"
+],
+"a": 0,
+"w": "A task graded with a rubric that shows the skill = performance based assessment."
+},
+{
+"k": "assess",
+"y": "mc",
+"q": "Which order is correct?",
+"o": [
+"Pre-assessment, formative assessment, summative assessment",
+"Summative, formative, pre-assessment",
+"Formative, pre-assessment, summative",
+"Summative only"
+],
+"a": 0,
+"w": "Before teaching, during teaching, then at the end."
+},
+{
+"k": "data",
+"y": "sc",
+"q": "Exit tickets show 6 students mixed up the problem and resolution. What's the best next step?",
+"o": [
+"Reteach the difference in a small group before moving on",
+"Move on to the next unit",
+"Give the whole class a final test",
+"Ignore it; most students got it"
+],
+"a": 0,
+"w": "Use formative data to adjust instruction for the students who need it."
+},
+{
+"k": "data",
+"y": "mc",
+"q": "Which feedback is most effective?",
+"o": [
+"“Your first two events are in order. Check event 3. What happened after Tad helped?”",
+"“Good job!”",
+"“Wrong.”",
+"“Try harder next time.”"
+],
+"a": 0,
+"w": "Effective feedback is specific, timely, and tells the student what to do next."
+},
+{
+"k": "data",
+"y": "tf",
+"q": "True or false: Data includes only standardized test scores.",
+"o": [
+"True",
+"False"
+],
+"a": 1,
+"w": "False. Data is any information used to inform teaching: observations, work samples, exit tickets, and more."
+},
+{
+"k": "data",
+"y": "mc",
+"q": "What is the main reason teachers analyze assessment data?",
+"o": [
+"To tailor lessons to student needs and align with standards",
+"To fill out report cards only",
+"To compare teachers",
+"To choose seating"
+],
+"a": 0,
+"w": "Data informs instructional decisions so every student's needs are met."
+},
+{
+"k": "data",
+"y": "sc",
+"q": "Pre-assessment data shows 5 students already mastered the unit's skill. What should the teacher do?",
+"o": [
+"Provide enrichment or extension so they're challenged",
+"Make them repeat the whole unit",
+"Give them no work",
+"Move them to a lower group"
+],
+"a": 0,
+"w": "Data should guide differentiation for students who are ahead as well as behind."
+},
+{
+"k": "data",
+"y": "mc",
+"q": "Which describes the data cycle?",
+"o": [
+"Assess, analyze, adjust instruction, reassess",
+"Teach, test, move on",
+"Grade, file, forget",
+"Assess once at the end of the year"
+],
+"a": 0,
+"w": "Data use is a continuous cycle that drives instruction."
+},
+{
+"k": "data",
+"y": "tf",
+"q": "True or false: Feedback is most useful when it's given long after the assignment is finished.",
+"o": [
+"True",
+"False"
+],
+"a": 1,
+"w": "False. Timely feedback helps students fix mistakes while the learning is fresh."
+},
+{
+"k": "diff",
+"y": "mc",
+"q": "Teachers differentiate based on which three student characteristics?",
+"o": [
+"Readiness, interests, and learning profile",
+"Age, height, and grade",
+"Test scores only",
+"Behavior, attendance, and grades"
+],
+"a": 0,
+"w": "Tomlinson's model: readiness, interest, and learning profile."
+},
+{
+"k": "diff",
+"y": "mc",
+"q": "Teachers can differentiate which four classroom elements?",
+"o": [
+"Content, process, product, and learning environment",
+"Grades, homework, tests, and seating",
+"Standards, objectives, rubrics, and data",
+"Only the final test"
+],
+"a": 0,
+"w": "Content (what), process (how they learn), product (how they show it), and affect/environment."
+},
+{
+"k": "diff",
+"y": "sc",
+"q": "Students can show what they learned about the water cycle by making a poster, writing a song, or giving a short talk. What is being differentiated?",
+"o": [
+"Product",
+"Content",
+"Process",
+"Environment"
+],
+"a": 0,
+"w": "Product is how students demonstrate understanding."
+},
+{
+"k": "diff",
+"y": "sc",
+"q": "During practice, some students use manipulatives, some use a graphic organizer, and some work with a partner. What is being differentiated?",
+"o": [
+"Process",
+"Product",
+"Content",
+"Standard"
+],
+"a": 0,
+"w": "Process is how students make sense of the content."
+},
+{
+"k": "diff",
+"y": "sc",
+"q": "A teacher gives students texts on the same topic at different reading levels. What is being differentiated?",
+"o": [
+"Content",
+"Product",
+"Environment",
+"Assessment type"
+],
+"a": 0,
+"w": "Content is what students learn and the materials used to learn it."
+},
+{
+"k": "diff",
+"y": "sc",
+"q": "A teacher adds a quiet reading corner, flexible seating, and builds a classroom where mistakes are welcome. What is being differentiated?",
+"o": [
+"Affect/learning environment",
+"Content",
+"Product",
+"Process"
+],
+"a": 0,
+"w": "The physical and emotional atmosphere of the classroom."
+},
+{
+"k": "diff",
+"y": "tf",
+"q": "True or false: Differentiation means giving each student a completely different standard.",
+"o": [
+"True",
+"False"
+],
+"a": 1,
+"w": "False. Students work toward the same standard through different paths and supports."
+},
+{
+"k": "diff",
+"y": "sc",
+"q": "A teacher uses a student's love of basketball to teach percentages with free throw stats. Which characteristic is she using?",
+"o": [
+"Interest",
+"Readiness",
+"Learning profile",
+"Modification"
+],
+"a": 0,
+"w": "Interests are topics that capture a student's curiosity."
+},
+{
+"k": "diff",
+"y": "mc",
+"q": "What does KUD stand for when talking about content?",
+"o": [
+"Know, Understand, Do",
+"Kids Under Development",
+"Knowledge, Use, Data",
+"Key Units Delivered"
+],
+"a": 0,
+"w": "Content refers to what students should Know, Understand, and be able to Do."
+},
+{
+"k": "adapt",
+"y": "mc",
+"q": "What is the difference between an accommodation and a modification?",
+"o": [
+"An accommodation changes HOW a student accesses learning; a modification changes WHAT they're expected to learn",
+"They are the same",
+"A modification gives extra time",
+"An accommodation lowers the standard"
+],
+"a": 0,
+"w": "Accommodation = same expectations, different access. Modification = changed expectations."
+},
+{
+"k": "adapt",
+"y": "sc",
+"q": "A student with dyslexia listens to the audiobook version of the grade level novel and takes the same test as her peers. What is this?",
+"o": [
+"Accommodation",
+"Modification",
+"Summative assessment",
+"Gifted program"
+],
+"a": 0,
+"w": "Same content and expectations, different way of accessing it."
+},
+{
+"k": "adapt",
+"y": "sc",
+"q": "A student is given 5 spelling words instead of 20 and words at a lower grade level. What is this?",
+"o": [
+"Modification",
+"Accommodation",
+"Adaptation",
+"Pre-assessment"
+],
+"a": 0,
+"w": "The content and expectations changed, so it's a modification."
+},
+{
+"k": "adapt",
+"y": "sc",
+"q": "A student uses a slant board, pencil grip, and a quiet room to complete assignments. Using WGU's definitions, what is this?",
+"o": [
+"Adaptation",
+"Modification",
+"Summative assessment",
+"Spiraling"
+],
+"a": 0,
+"w": "Adaptations change the environment, equipment, or how assignments are completed."
+},
+{
+"k": "adapt",
+"y": "sc",
+"q": "A student with ADHD struggles to finish long assignments. Which support is most appropriate?",
+"o": [
+"Chunk the assignment into smaller parts with a checklist",
+"Give a longer assignment",
+"Remove all grades",
+"Seat the student near the door"
+],
+"a": 0,
+"w": "Chunking and checklists support focus and organization."
+},
+{
+"k": "adapt",
+"y": "sc",
+"q": "Which strategy best supports English learners during a vocabulary heavy lesson?",
+"o": [
+"Visuals, sentence stems, and preteaching key vocabulary",
+"Speaking faster",
+"Only written directions",
+"Removing all group work"
+],
+"a": 0,
+"w": "Visual supports and language scaffolds help ELs access content."
+},
+{
+"k": "adapt",
+"y": "sc",
+"q": "A gifted student finishes early and is bored. What is the best response?",
+"o": [
+"Offer enrichment or an extension task that goes deeper",
+"Give more of the same easy worksheets",
+"Have her tutor others all day",
+"Let her sit quietly"
+],
+"a": 0,
+"w": "Gifted learners need depth and challenge, not just more work."
+},
+{
+"k": "adapt",
+"y": "tf",
+"q": "True or false: A learning disability means the student has low overall intelligence.",
+"o": [
+"True",
+"False"
+],
+"a": 1,
+"w": "False. A learning disability affects a specific area of learning, not overall intelligence."
+},
+{
+"k": "adapt",
+"y": "mc",
+"q": "Which best describes competency-based education (CBE)?",
+"o": [
+"Students advance as soon as they prove mastery",
+"Students advance only at the end of the semester",
+"Students skip assessments",
+"Students are grouped by age only"
+],
+"a": 0,
+"w": "CBE lets learners move on once they demonstrate mastery, like WGU."
+},
+{
+"k": "adapt",
+"y": "tf",
+"q": "True or false: Extended time on a test is a modification.",
+"o": [
+"True",
+"False"
+],
+"a": 1,
+"w": "False. Extended time is an accommodation. The test content and expectations don't change."
+},
+{
+"k": "crt",
+"y": "mc",
+"q": "What is culturally responsive teaching?",
+"o": [
+"Acknowledging and valuing students' cultures, experiences, and perspectives to improve instruction",
+"Teaching every student exactly the same way",
+"Avoiding any talk about culture",
+"Grouping students by race"
+],
+"a": 0,
+"w": "CRT uses students' cultures as strengths and bridges to learning."
+},
+{
+"k": "crt",
+"y": "sc",
+"q": "A teacher chooses books with characters from her students' backgrounds and uses examples from their community in math problems. What is she practicing?",
+"o": [
+"Culturally responsive teaching",
+"Behaviorism",
+"Modification",
+"Summative assessment"
+],
+"a": 0,
+"w": "Connecting instruction to students' lives and cultures."
+},
+{
+"k": "crt",
+"y": "sc",
+"q": "A teacher says, “Her family doesn't speak English at home, so she'll never catch up.” What kind of thinking is this?",
+"o": [
+"Deficit thinking",
+"Asset-based thinking",
+"Culturally responsive teaching",
+"Scaffolding"
+],
+"a": 0,
+"w": "Deficit thinking treats a student's background as a problem. CRT is asset based."
+},
+{
+"k": "crt",
+"y": "sc",
+"q": "A bilingual student is invited to share words in her home language during a vocabulary lesson. Which approach is this?",
+"o": [
+"Asset-based, culturally responsive teaching",
+"Deficit thinking",
+"A modification",
+"Homogenous grouping"
+],
+"a": 0,
+"w": "Treating a student's language and culture as a strength."
+},
+{
+"k": "crt",
+"y": "tf",
+"q": "True or false: Culturally responsive teaching means making assumptions about students based on stereotypes of their culture.",
+"o": [
+"True",
+"False"
+],
+"a": 1,
+"w": "False. CRT means getting to know each student and family as individuals, not relying on stereotypes."
+},
+{
+"k": "crt",
+"y": "mc",
+"q": "Culturally responsive pedagogy recognizes that differences in how students learn are connected to:",
+"o": [
+"Family structure, cultural identity, language, and background",
+"Only test scores",
+"Only age",
+"Only grade level"
+],
+"a": 0,
+"w": "That's the WGU definition of CRP."
+},
+{
+"k": "crt",
+"y": "sc",
+"q": "A teacher learns that a student helps run the family restaurant and uses that experience in a lesson on measurement. What is she drawing on?",
+"o": [
+"The student's funds of knowledge",
+"A modification",
+"A summative assessment",
+"Behaviorism"
+],
+"a": 0,
+"w": "Funds of knowledge are skills and experiences from home that teachers can build on."
+},
+{
+"k": "crt",
+"y": "sc",
+"q": "Which classroom practice is MOST culturally responsive?",
+"o": [
+"Building relationships with families and connecting lessons to students' lives",
+"Using one textbook with no outside examples",
+"Banning home languages in class",
+"Treating every student exactly the same"
+],
+"a": 0,
+"w": "CRT values students' backgrounds and builds on them."
+}
+];
+
+const TOPIC_LESSON={"std": "L-std", "strat": "L-strat", "theory": "L-theory", "assess": "L-assess", "data": "L-data", "diff": "L-diff", "adapt": "L-adapt", "crt": "L-crt"};
+function lessonName(id){ const el=document.querySelector("#"+id+" summary b"); return el?el.textContent:"the lesson"; }
+function openLesson(id){
+  const el=document.getElementById(id); if(!el) return;
+  if(el.dataset.k!=="all" && topic!=="all" && el.dataset.k!==topic){ topic="all"; $("topic").value="all"; buildDeck(); filterLessons(); }
+  switchView("learn"); el.open=true;
+  setTimeout(()=>{ el.scrollIntoView({behavior:"smooth",block:"start"}); el.classList.remove("hl"); void el.offsetWidth; el.classList.add("hl"); },60);
+}
+function buildTricks(){
+  const body=document.getElementById("tricksBody"); if(!body) return;
+  Object.keys(TOPICS).filter(k=>k!=="all").forEach(k=>{
+    const sec=document.createElement("div"); sec.className="trick-sec"; sec.dataset.k=k;
+    const h=document.createElement("h5"); h.textContent=TOPICS[k]; sec.appendChild(h);
+    CARDS.filter(c=>c.k===k&&c.m).forEach(c=>{ const r=document.createElement("div"); r.className="trick-row"; const b=document.createElement("b"); b.textContent=c.t; const h0=c.m[0]; const ix=h0.indexOf(":"); r.append(b, document.createTextNode(ix>0&&ix<16?h0.slice(ix+1).trim():h0)); sec.appendChild(r); });
+    body.appendChild(sec);
+  });
+}
+function filterLessons(){
+  document.querySelectorAll(".trick-sec").forEach(x=>{ x.style.display=(topic==="all"||x.dataset.k===topic)?"":"none"; });
+  document.querySelectorAll(".lesson").forEach(l=>{ l.style.display=(topic==="all"||l.dataset.k==="all"||l.dataset.k===topic)?"":"none"; });
+}
+
+/* ---------- STATE ---------- */
+const $ = id => document.getElementById(id);
+let topic = "all";
+let deck = [], ci = 0;
+let round = [], qi = 0, score = 0, roundMissed = [];
+let answered = false;
+
+const store = {
+  get(){ try { return JSON.parse(localStorage.getItem("d637Missed")||"[]"); } catch(e){ return memMissed; } },
+  set(v){ memMissed = v; try { localStorage.setItem("d637Missed", JSON.stringify(v)); } catch(e){} }
+};
+let memMissed = [];
+let missed = store.get();
+
+/* topic select */
+Object.entries(TOPICS).forEach(([k,v])=>{
+  const o=document.createElement("option"); o.value=k; o.textContent=v; $("topic").appendChild(o);
+});
+$("topic").onchange = e => { topic = e.target.value; buildDeck(); filterLessons(); showStartIfIdle(); };
+
+function shuffle(a){ a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+const inTopic = x => topic==="all" || x.k===topic;
+
+/* ---------- FLASHCARDS ---------- */
+function buildDeck(sh){ deck = CARDS.filter(inTopic); if(sh) deck = shuffle(deck); ci = 0; showCard(); }
+function showCard(){
+  const c = deck[ci]; $("flip").classList.remove("flipped");
+  setTimeout(()=>{
+    $("cTerm").textContent=c.t; $("cTerm2").textContent=c.t; $("cDef").textContent=c.d;
+    $("cTip").innerHTML = c.tip ? "<b>Remember:</b> "+c.tip : ""; $("cTip").style.display=c.tip?"block":"none";
+    const hb=$("cHooks"); hb.innerHTML=""; hb.style.display=c.m?"block":"none";
+    if(c.m){ const t=document.createElement("b"); t.textContent="💡 Memory tricks"; const box=document.createElement("div"); box.className="hk";
+      c.m.forEach(h=>{ const d=document.createElement("div"); const ix=h.indexOf(":"); if(ix>0&&ix<16){ const sp=document.createElement("span"); sp.textContent=h.slice(0,ix); d.append(sp, document.createTextNode(h.slice(ix+1).trim())); } else d.textContent=h; box.appendChild(d); });
+      hb.append(t,box); }
+    const m=$("cMore"); m.innerHTML=""; m.classList.remove("on"); $("moreBtn").textContent="Explain it more ▾";
+    const add=(label,txt)=>{ if(!txt) return; const d=document.createElement("div"); d.className="blk"; const b=document.createElement("b"); b.textContent=label; d.append(b, document.createTextNode(txt)); m.appendChild(d); };
+    add("In plain words", c.p); add("Example", c.ex);
+    const lid=c.L||TOPIC_LESSON[c.k]; const lb=document.createElement("button"); lb.className="lesson-link"; lb.textContent="Open lesson: "+lessonName(lid);
+    lb.onclick=e=>{ e.stopPropagation(); openLesson(lid); }; m.appendChild(lb);
+  }, 120);
+  $("cCount").textContent = (ci+1)+" / "+deck.length;
+  $("cTopic").textContent = TOPICS[c.k];
+  $("prevBtn").disabled = ci===0;
+}
+const flip = ()=> $("flip").classList.toggle("flipped");
+const nextCard = ()=>{ if(ci<deck.length-1){ci++;showCard();} else { ci=0; showCard(); } };
+const prevCard = ()=>{ if(ci>0){ci--;showCard();} };
+$("flip").onclick=e=>{ if(e.target.closest(".more")||e.target.id==="moreBtn"||e.target.id==="cSpeak") return; flip(); };
+$("moreBtn").onclick=e=>{ e.stopPropagation(); const on=$("cMore").classList.toggle("on"); $("moreBtn").textContent= on?"Hide ▴":"Explain it more ▾"; }; $("flipBtn").onclick=flip; $("nextCard").onclick=nextCard; $("prevBtn").onclick=prevCard;
+$("shuffleBtn").onclick=()=>buildDeck(true);
+
+/* ---------- QUIZ ---------- */
+function genFromCard(c, idx){
+  const pool = CARDS.filter(x=>x!==c && x.g!==false && x.k!=="nums");
+  const same = shuffle(pool.filter(x=>x.k===c.k)), other = shuffle(pool.filter(x=>x.k!==c.k));
+  const wrong = [...same, ...other].slice(0,3).map(x=>x.t);
+  return {id:"g"+idx, k:c.k, y:"vocab", q:"Which term matches this definition?", ctx:c.d, o:[c.t,...wrong], a:0, w:c.t+": "+c.d+(c.tip?" "+c.tip:"")};
+}
+const ALLQ = QS.map((q,i)=>({...q,id:"q"+i}));
+function cardQs(){ return CARDS.map((c,i)=>({c,i})).filter(({c})=>c.g!==false && c.k!=="nums"); }
+function qById(id){
+  if(id[0]==="q") return ALLQ[+id.slice(1)];
+  const i=+id.slice(1); return CARDS[i] ? genFromCard(CARDS[i], i) : null;
+}
+function prep(q){
+  if(q.y==="tf") return {...q, opts:q.o.map((t,i)=>({t,ok:i===q.a}))};
+  return {...q, opts:shuffle(q.o.map((t,i)=>({t,ok:i===q.a})))};
+}
+function startRound(missedOnly){
+  let qs;
+  if(missedOnly){
+    qs = shuffle(missed.map(qById).filter(Boolean)).slice(0,20);
+    if(!qs.length){ alert("No missed questions yet. Nice work!"); return; }
+  } else {
+    const written = shuffle(ALLQ.filter(inTopic));
+    const vocab = shuffle(cardQs().filter(({c})=>inTopic(c))).map(({c,i})=>genFromCard(c,i));
+    let nW = Math.min(written.length, 14), nV = Math.min(vocab.length, 20-nW);
+    nW = Math.min(written.length, 20-nV);
+    qs = shuffle([...written.slice(0,nW), ...vocab.slice(0,nV)]);
+  }
+  round = qs.map(prep); qi=0; score=0; roundMissed=[];
+  switchView("quiz");
+  $("qStart").style.display="none"; $("qEnd").style.display="none"; $("qRun").style.display="block";
+  showQ();
+}
+const TYPES = {mc:"Multiple choice", tf:"True or false", sc:"Scenario", vocab:"Vocab"};
+function showQ(){
+  answered=false;
+  const q=round[qi];
+  $("progBar").style.width = (qi/round.length*100)+"%";
+  $("qNum").textContent = "Question "+(qi+1)+" of "+round.length;
+  $("qType").textContent = TYPES[q.y];
+  $("qText").textContent = q.q;
+  $("qCtx").style.display = q.ctx ? "block":"none"; $("qCtx").textContent = q.ctx||"";
+  const box=$("qOpts"); box.innerHTML="";
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement("button"); b.className="opt";
+    b.innerHTML='<span class="l">'+"ABCD"[i]+'</span><span></span>'; b.lastChild.textContent=o.t;
+    b.onclick=()=>answer(i); box.appendChild(b);
+  });
+  $("qWhy").className="why"; $("nextBtn").style.display="none";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function answer(i){
+  if(answered) return; answered=true;
+  const q=round[qi], btns=[...$("qOpts").children];
+  btns.forEach((b,j)=>{ b.disabled=true; if(q.opts[j].ok) b.classList.add("right"); });
+  const ok=q.opts[i].ok;
+  if(ok){ score++; missed=missed.filter(x=>x!==q.id); }
+  else { btns[i].classList.add("wrong"); if(!missed.includes(q.id)) missed.push(q.id); roundMissed.push(q); }
+  store.set(missed); updateBadge();
+  const correct=q.opts.find(o=>o.ok).t;
+  $("qWhy").className="why "+(ok?"ok":"no");
+  $("qWhy").innerHTML='<span class="v">'+(ok?"Yes! Correct.":"Not quite. Answer: ")+'</span>';
+  if(!ok) $("qWhy").firstChild.textContent += correct;
+  $("qWhy").appendChild(document.createTextNode(q.w));
+  const lid=TOPIC_LESSON[q.k]; const lb=document.createElement("button"); lb.className="lesson-link"; lb.textContent="Learn more: "+lessonName(lid); lb.onclick=()=>openLesson(lid); $("qWhy").appendChild(lb);
+  $("nextBtn").textContent = qi<round.length-1 ? "Next question" : "See my score";
+  $("nextBtn").style.display="block";
+}
+function nextQ(){ if(qi<round.length-1){qi++;showQ();} else endRound(); }
+$("nextBtn").onclick=nextQ;
+function endRound(){
+  $("qRun").style.display="none"; $("qEnd").style.display="block";
+  const pct=Math.round(score/round.length*100);
+  $("endScore").textContent=pct+"%";
+  $("endTitle").textContent = pct>=85?"You're ready, girl!":pct>=70?"So close. Keep going!":"Good practice. Let's review.";
+  $("endMsg").textContent = score+" out of "+round.length+" correct."+(roundMissed.length?" Review what you missed below.":" Perfect round!");
+  const list=$("endReview"); list.innerHTML="";
+  roundMissed.forEach(q=>list.appendChild(reviewItem(q)));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function reviewItem(q){
+  const d=document.createElement("div"); d.className="ri";
+  const b=document.createElement("b"); b.textContent=q.q+(q.ctx?" "+q.ctx:"");
+  const a=document.createElement("div"); a.className="ans"; a.textContent="Answer: "+q.o[q.a];
+  const w=document.createElement("div"); w.textContent=q.w;
+  d.append(b,a,w); return d;
+}
+$("startBtn").onclick=()=>startRound(false);
+$("againBtn").onclick=()=>startRound(false);
+$("startMissed").onclick=()=>startRound(true);
+$("endMissed").onclick=()=>startRound(true);
+function showStartIfIdle(){
+  if($("qRun").style.display!=="block"){ $("qEnd").style.display="none"; $("qStart").style.display="block"; }
+}
+
+/* ---------- MISSED ---------- */
+function updateBadge(){ $("missedBadge").textContent=missed.length; }
+function renderMissed(){
+  const list=$("missedList"); list.innerHTML="";
+  if(!missed.length){ list.innerHTML='<div class="empty">Nothing here yet. 🌿</div>'; return; }
+  missed.map(qById).filter(Boolean).forEach(q=>list.appendChild(reviewItem(q)));
+}
+$("missedGo").onclick=()=>startRound(true);
+$("missedClear").onclick=()=>{ if(confirm("Clear all missed questions?")){ missed=[]; store.set(missed); updateBadge(); renderMissed(); } };
+
+/* ---------- TABS ---------- */
+function switchView(v){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.v===v));
+  document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+  $("topic").parentElement.style.display = v==="missed" ? "none" : "block";
+  if(v==="missed") renderMissed();
+}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>switchView(t.dataset.v));
+
+/* ---------- KEYBOARD ---------- */
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="SELECT") return;
+  if($("v-cards").classList.contains("on")){
+    if(e.code==="Space"){e.preventDefault();flip();}
+    if(e.key==="ArrowRight")nextCard();
+    if(e.key==="ArrowLeft")prevCard();
+  } else if($("v-quiz").classList.contains("on") && $("qRun").style.display==="block"){
+    const n=parseInt(e.key);
+    if(n>=1&&n<=4&&!answered&&round[qi].opts[n-1]) answer(n-1);
+    if(e.key==="Enter"&&answered) nextQ();
+  }
+});
+
+
+/* ---------- READ ALOUD ---------- */
+const TTS = window.speechSynthesis;
+let voices=[], vPick="", vRate=1, ttsQueue=[], paused=false;
+try{ vPick=localStorage.getItem("d637Voice")||""; vRate=parseFloat(localStorage.getItem("d637Rate")||"1")||1; }catch(e){}
+function loadVoices(){
+  if(!TTS) return;
+  voices = TTS.getVoices().filter(v=>/^en/i.test(v.lang));
+  const sel=$("vSel"); sel.innerHTML="";
+  const rank=v=>(/premium|enhanced|natural|neural/i.test(v.name)?0:/^en-US/i.test(v.lang)?1:2);
+  voices.sort((a,b)=>rank(a)-rank(b)||a.name.localeCompare(b.name));
+  voices.forEach(v=>{ const o=document.createElement("option"); o.value=v.name; o.textContent=v.name+" ("+v.lang+")"; sel.appendChild(o); });
+  if(!voices.find(v=>v.name===vPick) && voices.length) vPick=voices[0].name;
+  if(!voices.length){ const o=document.createElement("option"); o.value=""; o.textContent="Device default voice"; sel.appendChild(o); }
+  sel.value=vPick;
+}
+if(TTS){ loadVoices(); TTS.onvoiceschanged=loadVoices; }
+$("vSel").onchange=e=>{ vPick=e.target.value; try{localStorage.setItem("d637Voice",vPick);}catch(err){} };
+$("vRate").value=vRate; $("vRateLbl").textContent=vRate.toFixed(2).replace(/0$/,"");
+$("vRate").oninput=e=>{ vRate=parseFloat(e.target.value); $("vRateLbl").textContent=vRate.toFixed(2).replace(/0$/,""); try{localStorage.setItem("d637Rate",vRate);}catch(err){} };
+$("voiceOpen").onclick=()=>$("voiceModal").classList.add("on");
+$("vClose").onclick=()=>$("voiceModal").classList.remove("on");
+$("voiceModal").onclick=e=>{ if(e.target.id==="voiceModal") $("voiceModal").classList.remove("on"); };
+$("vTest").onclick=()=>speak("Hi! This is how I'll sound reading your special education law lessons. You've got this.");
+
+function clean(t){ return t.replace(/[➜▾▴▲▼★✓🔊💗🌿]/g," ").replace(/\bvs\.\s/g,"versus ").replace(/\bv\.\s/g,"versus ").replace(/\s+/g," ").trim(); }
+function chunks(t){ return (t.match(/[^.!?]+[.!?]*["”]?/g)||[t]).map(x=>x.trim()).filter(Boolean); }
+function speak(text){
+  if(!TTS){ alert("Read aloud isn't supported in this browser. Try Safari or Chrome."); return; }
+  TTS.cancel(); paused=false; $("pPause").textContent="Pause";
+  ttsQueue = chunks(clean(text));
+  const v = voices.find(x=>x.name===vPick);
+  ttsQueue.forEach((c,i)=>{
+    const u=new SpeechSynthesisUtterance(c); if(v){u.voice=v;u.lang=v.lang;} u.rate=vRate;
+    if(i===ttsQueue.length-1) u.onend=()=>{ $("player").style.display="none"; };
+    TTS.speak(u);
+  });
+  $("selRead").style.display="none"; $("player").style.display="flex";
+}
+$("pPause").onclick=()=>{ if(paused){TTS.resume();paused=false;$("pPause").textContent="Pause";} else {TTS.pause();paused=true;$("pPause").textContent="Resume";} };
+$("pStop").onclick=()=>{ TTS.cancel(); $("player").style.display="none"; };
+
+/* highlighted text */
+let selText="", selTimer=null;
+document.addEventListener("selectionchange",()=>{
+  const t=(window.getSelection()||"").toString().trim();
+  if(t.length>2){ selText=t; clearTimeout(selTimer); if($("player").style.display!=="flex") $("selRead").style.display="block"; }
+  else { clearTimeout(selTimer); selTimer=setTimeout(()=>{ $("selRead").style.display="none"; },700); }
+});
+$("selRead").addEventListener("pointerdown",e=>{ e.preventDefault(); });
+$("selRead").onclick=()=>{ if(selText) speak(selText); };
+
+/* listen buttons */
+document.querySelectorAll(".lesson").forEach(l=>{
+  const lb=l.querySelector(".lb"); const b=document.createElement("button"); b.className="speak-btn"; b.textContent="🔊 Listen to this lesson";
+  b.onclick=()=>{ const title=l.querySelector("summary b").textContent; const body=[...lb.children].filter(x=>x!==b).map(x=>x.innerText).join(". "); speak(title+". "+body); };
+  lb.insertBefore(b, lb.firstChild);
+});
+$("cSpeak").onclick=e=>{ e.stopPropagation(); const c=deck[ci]; speak([c.t, c.d, c.p?("In plain words. "+c.p):"", c.ex?("Example. "+c.ex):"", c.tip?("Remember. "+c.tip):"", c.m?("Memory tricks. "+c.m.join(". ")):""].filter(Boolean).join(". ")); };
+$("qSpeak").onclick=()=>{ const q=round[qi]; let t=q.q+(q.ctx?". "+q.ctx:"")+". "+q.opts.map((o,i)=>"ABCD"[i]+". "+o.t).join(". ");
+  if(answered){ t=$("qWhy").firstChild.textContent+". "+q.w; } speak(t); };
+
+buildTricks(); buildDeck(); filterLessons(); updateBadge();
+</script>
+</body>
+</html>
